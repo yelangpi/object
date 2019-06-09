@@ -1,0 +1,9 @@
+在对象层里
+泉水：bluewater redwater
+水晶：bluecrystal redcrystal
+塔：bluetower redtower
+四块凹陷区域：wall_leftup wall_leftdown
+                       wall_rightup wall_rightdown
+
+
+判断是否可走的变量：stop  不可走时为true
