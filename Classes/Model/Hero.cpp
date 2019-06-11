@@ -135,7 +135,7 @@ void Hero::Move(float delta)
 	{
 		//WalkWithDirection("Right");
 		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x + 5, vec.y));
+		this->setPosition(Vec2(vec.x + 20, vec.y));
 		return;
 	}
 	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_A])

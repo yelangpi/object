@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include"Model/Hero.h"
 #include"Model/FlyingBox.h"
+#include"Model/Butterfly.h"
 #include<vector>
 class GameScene : public cocos2d::Layer
 {
@@ -31,12 +32,15 @@ public:
 	void LoadingAnimation(std::string sprite_name);
 	std::vector<FlyingBox*>_flying;
 	std::vector<FlyingBox*>_Scheduleflying;
+	std::vector<Butterfly*>_Butterfly;
+	std::vector<Butterfly*>_ScheduleButterfly;
 	void playerAttack();
 	void playerAttack_1();
 	void playerAttack_2();
 	void playerAttack_3();
 	std::vector<Model*>player_flag;
 	std::vector<Model*>enemy_flag;
+	bool out_of_windows(cocos2d::Vec2 v);
 	void MoveMap(float delta);
 	cocos2d::Layer* FixedLayer;
 	float now_x = 0;

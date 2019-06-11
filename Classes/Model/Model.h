@@ -41,6 +41,7 @@ class Model :public cocos2d::Sprite {
 	CC_SYNTHESIZE(Buff, _buff, Buff);
 	//ÒÆËÙ
 	CC_SYNTHESIZE(float, _movingRate, MovingRate);
+	std::string _name;
 public:
 	Model();
 	virtual ~Model();

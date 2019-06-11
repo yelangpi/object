@@ -34,6 +34,7 @@ bool GameScene::initWithName(std::string name1,std::string name2)
 	_tileMap->getLayer("background")->setVisible(true);
 	_tileMap->getLayer("red")->setVisible(true);
 	_tileMap->getLayer("blue")->setVisible(true);
+	//_tileMap->getLayer("collidable")->setVisible(false);
 	this->addChild(_tileMap, 0);
 
 	//
@@ -100,16 +101,82 @@ bool GameScene::initWithName(std::string name1,std::string name2)
 	_player->setPosition(v1.x / 2, v1.y / 4);
 	_enemy->setPosition(v1.x / 2, v1.y / 4 * 3);
 	
+	//auto player = Sprite::create("DaJi/Left/0000.PNG");
+	//_player = player;
+	//auto computer = Sprite::create("HouYi/touxiang.png");
+	//_computer = computer;
+	//player->setPosition(v1.x / 2, v1.y / 4);
+	//computer->setPosition(v1.x / 2, v1.y / 4 * 3);
+	////
+	//auto shuijing = Sprite::create("shuijing/shuijing.png");
+	//shuijing->setPosition(v1.x / 2, v1.y / 2);
+	//this->addChild(shuijing, 1);
+	//
+	//PhysicsBody*playerone = PhysicsBody::createCircle(player->getContentSize().width / 2, PHYSICSBODY_MATERIAL_DEFAULT);
+	//playerone->getShape(0)->setRestitution(1.0f);
+	//playerone->getShape(0)->setRestitution(1.0f);
+	//
+	//playerone->getShape(0)->setFriction(0.0f);
+	//
+	//playerone->getShape(0)->setDensity(1.0f);
+	////设置物体是否受重力系数影响
+	//playerone->setGravityEnable(false);
+
+	////设置物体的冲力
+	//Vec2 force = Vec2(500000.0f, 0);
+	//playerone->applyImpulse(force);
+	////把物体添加到精灵中
+	//player->setPhysicsBody(playerone);
+	////computer->setPhysicsBody(playerone);
+	////设置标志
+	//player->setTag(1);
+	////this->addChild(player);
+	//
+	////auto move1 = MoveTo::create(3, Point(0, 0));
+	////player->runAction(move1);
+	////player->runAction(Sequence::createWithTwoActions(move1, move1->reverse()));
+	///*auto jump = JumpBy::create(10, Vec2(0, 500), 100, 10);
+	//player->runAction(jump);*/
+	////
+	//PhysicsBody*playerone1 = PhysicsBody::createCircle(player->getContentSize().width / 2, PHYSICSBODY_MATERIAL_DEFAULT);
+	//playerone1->getShape(0)->setRestitution(1.0f);
+	//playerone1->getShape(0)->setRestitution(1.0f);
+	//auto x = playerone1->getMass();
+	//playerone1->getShape(0)->setFriction(0.0f);
+
+	//playerone1->getShape(0)->setDensity(1.0f);
+	////设置物体是否受重力系数影响
+	//playerone1->setGravityEnable(true);
+	////
+	////
+	//computer->setPhysicsBody(playerone1);
 	
 	_tileMap->addChild(player, 6);
 	_tileMap->addChild(enemy, 6);
-	
+	//
+	/*auto background = Sprite::create("StartScene/background.jpg");
+	Vec2 v2 = background->getContentSize();
+	background->setScale(v1.y / v2.y);
+	background->setPosition(v1.x / 2, v1.y / 2);*/
+	//auto mapFrame = PhysicsBody::createEdgeBox(background->getContentSize());
+
+	//background->setPhysicsBody(mapFrame);
+	//this->addChild(background, 0);
+	//
 	auto *dispatcher = Director::getInstance()->getEventDispatcher();
 	auto* keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
+	/*Animation* animation = AnimationCache::getInstance()->getAnimation("DaJi_Up");
+	animation->setLoops(10);
+	Animate *action = Animate::create(animation);
+	player->runAction(action);*/
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	scheduleUpdate();
+	//动画命名为 Explosion，加入到动画缓存中
+	//AnimationCache::getInstance()->addAnimation(animation, "Explosion");
+	//直接从动画缓存中取出 "Explosion" 动画
+	//Animation* animation = AnimationCache::getInstance()->getAnimation("Explosion");
 
 	return true;
 }
@@ -399,6 +466,22 @@ void GameScene::update(float delta)
 		}
 
 	}
+	if (!_ScheduleButterfly.empty())
+	{
+		for (auto i = _ScheduleButterfly.begin(); i != _ScheduleButterfly.end();)
+		{
+
+			if (now_time > (*i)->getNowtime())
+			{
+				(*i)->DoSomethingAwesome();
+				_Butterfly.push_back(*i);
+				i = _ScheduleButterfly.erase(i);
+			}
+			else
+				++i;
+		}
+
+	}
 	if (!_flying.empty())
 	{
 		for (auto i = _flying.begin(); i != _flying.end();)
@@ -436,6 +519,72 @@ void GameScene::update(float delta)
 		}
 	
 	}
+	if (!_Butterfly.empty())
+	{
+		for (auto i = _Butterfly.begin(); i != _Butterfly.end();)
+		{
+			
+			if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
+			{
+
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _Butterfly.erase(i);
+			}
+			else if (out_of_windows((*i)->getPosition()))
+			{
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
+				i = _Butterfly.erase(i);
+			}
+			else
+			{
+				std::string dir = (*i)->getDirection();
+				Vec2 pos = (*i)->getPosition();
+				if (dir == "Left")
+				{
+					pos.x -= 7;
+				}
+				else if (dir == "Right")
+				{
+					pos.x += 7;
+				}
+				else if (dir == "Up")
+				{
+					pos.y += 7;
+				}
+				else if (dir == "Down")
+				{
+					pos.y -= 7;
+				}
+				else if (dir == "Left-Up")
+				{
+					pos.y += 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Up")
+				{
+					pos.y += 4.95;
+					pos.x += 4.95;
+				}
+				else if (dir == "Left-Down")
+				{
+					pos.y -= 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Down")
+				{
+					pos.y -= 4.95;
+					pos.x += 4.95;
+				}
+				(*i)->setPosition(pos);
+				i++;
+			}
+				
+		}
+
+	}
+
 	MoveMap(delta);
 }
 void GameScene::LoadingYaSeAnimation()
@@ -644,8 +793,39 @@ void GameScene::playerAttack_3()
 	}
 	else if (_player->getName() == "HouYi")
 	{
-
+		Butterfly* f = Butterfly::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack2/%s/0000.PNG", _player->Now_Direction.c_str()));
+		if (GetCurrentTime() - _player->_attackTime >= 100) {
+			_player->_attackTime = GetCurrentTime();
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setDirection(_player->Now_Direction);
+			_ScheduleButterfly.push_back(f);
+			f->setVisible(false);
+			f->setOwner(_player);
+			_tileMap->addChild(f, 1);
+		}
 	}
+}
+
+bool GameScene::out_of_windows(cocos2d::Vec2 v)
+{
+	Vec2 w = this->_tileMap->getContentSize();
+	if (v.x < 0)
+	{
+		return true;
+	}
+	if (v.y < 0)
+	{
+		return true;
+	}
+	if (v.x > w.x)
+	{
+		return true;
+	}
+	if (v.y > w.y)
+	{
+		return true;
+	}
+	return false;
 }
 
 void GameScene::MoveMap(float delta)
