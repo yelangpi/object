@@ -7,7 +7,7 @@ USING_NS_CC;
 
 cocos2d::Scene * GameScene::createScene(std::string name1,std::string name2)
 {
-
+	//auto scene = Scene::create();
 	auto scene = Scene::createWithPhysics();
 	auto layer = GameScene::createWithName(name1,name2);
 	auto FixedLayer = Layer::create();
@@ -99,7 +99,7 @@ bool GameScene::initWithName(std::string name1,std::string name2)
 	_enemy = enemy;
 	_player->setPosition(v1.x / 2, v1.y / 4);
 	_enemy->setPosition(v1.x / 2, v1.y / 4 * 3);
-
+	
 	
 	_tileMap->addChild(player, 6);
 	_tileMap->addChild(enemy, 6);
@@ -108,10 +108,8 @@ bool GameScene::initWithName(std::string name1,std::string name2)
 	auto* keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
-	
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	scheduleUpdate();
-	
 
 	return true;
 }
@@ -280,12 +278,166 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::E
 	}
 }
 
-//void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)//
-//GameScene * GameScene::createWithName(std::string name1,std::string name2)
+void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)
+{
+	switch (keycode) {
+	case cocos2d::EventKeyboard::KeyCode::KEY_W:
+		if (!_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W])
+			break;
+		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+			_player->StopWalking("Left-Up");
+			_player->WalkWithDirection("Left");
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+			_player->StopWalking("Right-Up");
+			_player->WalkWithDirection("Right");
+			return;
+		}
 
+		_player->StopWalking("Up");
+		break;
+	case cocos2d::EventKeyboard::KeyCode::KEY_S:
+		if (!_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S])
+			break;
+		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+			_player->StopWalking("Left-Down");
+			_player->WalkWithDirection("Left");
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+			_player->StopWalking("Right-Down");
+			_player->WalkWithDirection("Right");
+			return;
+		}
+		_player->StopWalking("Down");
+		break;
+	case cocos2d::EventKeyboard::KeyCode::KEY_D:
+		if (!_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
+			break;
+		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+			_player->StopWalking("Right-Down");
+			_player->WalkWithDirection("Down");
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+			_player->StopWalking("Right-Up");
+			_player->WalkWithDirection("Up");
+			return;
+		}
+		_player->StopWalking("Right");
+		break;
+	case cocos2d::EventKeyboard::KeyCode::KEY_A:
+		if (!_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
+			break;
+		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+			_player->StopWalking("Left-Down");
+			_player->WalkWithDirection("Down");
+			return;
+		}
+		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+			_player->StopWalking("Left-Up");
+			_player->WalkWithDirection("Up");
+			return;
+		}
+		_player->StopWalking("Left");
+		break;
+	default:
+		break;
+	}
+}
 
-//void GameScene::update(float delta)
+GameScene * GameScene::createWithName(std::string name1,std::string name2)
+{
+	GameScene *pRet = new(std::nothrow) GameScene(); 
+	if (pRet && pRet->initWithName(name1,name2)) 
+	{ 
+			pRet->autorelease(); 
+			return pRet; 
+	} 
+	else 
+	{ 
+			delete pRet; 
+			pRet = nullptr; 
+			return nullptr; 
+	} 
+}
 
+void GameScene::update(float delta)
+{
+	_player->Move(delta);
+	long long now_time = GetCurrentTime();
+	if (!_Scheduleflying.empty())
+	{
+		for (auto i = _Scheduleflying.begin(); i != _Scheduleflying.end();)
+		{
+
+			if (now_time > (*i)->getNowtime())
+			{
+				(*i)->DoSomethingAwesome();
+				_flying.push_back(*i);
+				i = _Scheduleflying.erase(i);
+			}
+			else
+				++i;
+		}
+
+	}
+	if (!_flying.empty())
+	{
+		for (auto i = _flying.begin(); i != _flying.end();)
+		{
+			bool FindTarget = false;
+			Model*Target;
+			for (auto j = (*i)->target.begin(); j != (*i)->target.end(); j++)
+			{
+				if (!(*j)->isDie())
+				{
+					FindTarget = true;
+					Target = *j;
+					break;
+				}
+			}
+			if (FindTarget)
+			{
+				Vec2 f1 = (*i)->getPosition();
+				Vec2 f2 = Target->getPosition();
+				Vec2 f3 = f2 - f1;
+				f3.x /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
+				f3.y /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
+				(*i)->setPosition(f3 + f1);
+				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 20 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 20) {
+
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _flying.erase(i);
+				}
+				else
+					++i;
+			}
+			else
+				i = _flying.erase(i);
+		}
+	
+	}
+	MoveMap(delta);
+}
 void GameScene::LoadingYaSeAnimation()
 {
 	std::string dir[8] = { "Up","Down","Left","Right","Left-Up","Left-Down","Right-Up","Right-Down" };
@@ -314,17 +466,187 @@ void GameScene::LoadingYaSeAnimation()
 		AnimationCache::getInstance()->addAnimation(animation_01[i], StringUtils::format("%s_skill1_%s", "YaSe", dir[i].c_str()));
 	}
 }
-//void GameScene::LoadingAnimation(std::string sprite_name)
+void GameScene::LoadingAnimation(std::string sprite_name)
+{
+	std::string dir[8] = { "Up","Down","Left","Right","Left-Up","Left-Down","Right-Up","Right-Down" };
+	Animation* animation_00[8];
+	for (int i = 0; i < 8; i++)
+	{
+		animation_00[i] = Animation::create();
+		for (int j = 1; j <= Dirction_Animation_Walk_Number[std::make_pair(sprite_name, dir[i])]; j++)
+		{
+			animation_00[i]->addSpriteFrameWithFile(StringUtils::format("%s/%s/Walk/%s/000%d.PNG", sprite_name.c_str(), sprite_name.c_str(), dir[i].c_str(), j));
+		}
+		animation_00[i]->setDelayPerUnit(0.25f);
+		animation_00[i]->setLoops(-1);
+		AnimationCache::getInstance()->addAnimation(animation_00[i], StringUtils::format("%s_%s", sprite_name.c_str(), dir[i].c_str()));
+	}
+}
 
+void GameScene::playerAttack()
+{
+	if (_player->getName() == "DaJi")
+	{
+		bool GetEnemy = false;
+		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+		{
+			f->target.push_back(_enemy);
+			GetEnemy = true;
 
-//void GameScene::playerAttack()
+		}
+		if (!enemy_flag.empty())
+		{
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime >= 500 && GetEnemy) {
+			_player->_attackTime = GetCurrentTime();
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_player);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+	}
+	else if (_player->getName() == "YaSe")
+	{
 
-//void GameScene::playerAttack_1()
+	}
+	else if (_player->getName() == "HouYi")
+	{
+		bool GetEnemy = false;
+		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		{
+			f->target.push_back(_enemy);
+			GetEnemy = true;
 
-//void GameScene::playerAttack_2()
+		}
+		if (!enemy_flag.empty())
+		{
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime >= 300 && GetEnemy) {
+			_player->_attackTime = GetCurrentTime();
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_player);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+	}
+}
+void GameScene::playerAttack_1()
+{
 
-//void GameScene::playerAttack_3()
+}
+void GameScene::playerAttack_2()
+{
+	if (_player->getName() == "DaJi")
+	{
+		bool isDo = false;
+		bool GetEnemy = false;
+		FlyingBox* f = FlyingBox::createWithName("DaJi/DaJi/Skill2/0001.PNG");
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+		{
+			f->target.push_back(_enemy);
+			GetEnemy = true;
 
+		}
+		if (!enemy_flag.empty())
+		{
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime2 >= 15000 && GetEnemy)
+		{
+			isDo = true;
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_player);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+		if (isDo)
+		{
+		_player->_attackTime2 = GetCurrentTime();
+		}
+	}
+	else if (_player->getName() == "YaSe")
+	{
+
+	}
+	else if (_player->getName() == "HouYi")
+	{
+
+	}
+}
+void GameScene::playerAttack_3()
+{
+	if (_player->getName() == "DaJi")
+	{
+		bool isDo = false;
+		for (int a = 1; a <= 5; a++) {
+			bool GetEnemy = false;
+			FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
+			if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+			{
+				f->target.push_back(_enemy);
+				GetEnemy = true;
+
+			}
+			if (!enemy_flag.empty())
+			{
+				for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+				{
+					if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+					{
+						f->target.push_back(*i);
+						GetEnemy = true;
+					}
+				}
+			}
+			if (GetCurrentTime() - _player->_attackTime3 >= 15000 && GetEnemy) {
+				isDo = true;
+				f->setNowtime(GetCurrentTime() + 34+(a-1)*200);
+				f->setOwner(_player);
+				_Scheduleflying.push_back(f);
+				f->setVisible(false);
+				_tileMap->addChild(f, 1);
+			}
+		}
+		if(isDo)
+		_player->_attackTime3 = GetCurrentTime();
+	}
+	else if (_player->getName() == "YaSe")
+	{
+
+	}
+	else if (_player->getName() == "HouYi")
+	{
+
+	}
+}
 
 void GameScene::MoveMap(float delta)
 {
