@@ -4,6 +4,7 @@
 #include"Model/Hero.h"
 #include"Model/FlyingBox.h"
 #include"Model/Butterfly.h"
+#include"Model/RangeSkill.h"
 #include<vector>
 class GameScene : public cocos2d::Layer
 {
@@ -34,6 +35,7 @@ public:
 	std::vector<FlyingBox*>_Scheduleflying;
 	std::vector<Butterfly*>_Butterfly;
 	std::vector<Butterfly*>_ScheduleButterfly;
+	std::vector<RangeSkill*>_RangeSkill;
 	void playerAttack();
 	void playerAttack_1();
 	void playerAttack_2();
@@ -44,6 +46,9 @@ public:
 	void MoveMap(float delta);
 	cocos2d::Layer* FixedLayer;
 	float now_x = 0;
+	void doRangeSkill();
+	void doFlying();
+	void doButterfly();
 private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;

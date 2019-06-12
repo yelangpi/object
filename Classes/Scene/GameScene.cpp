@@ -450,141 +450,9 @@ void GameScene::update(float delta)
 {
 	_player->Move(delta);
 	long long now_time = GetCurrentTime();
-	if (!_Scheduleflying.empty())
-	{
-		for (auto i = _Scheduleflying.begin(); i != _Scheduleflying.end();)
-		{
-
-			if (now_time > (*i)->getNowtime())
-			{
-				(*i)->DoSomethingAwesome();
-				_flying.push_back(*i);
-				i = _Scheduleflying.erase(i);
-			}
-			else
-				++i;
-		}
-
-	}
-	if (!_ScheduleButterfly.empty())
-	{
-		for (auto i = _ScheduleButterfly.begin(); i != _ScheduleButterfly.end();)
-		{
-
-			if (now_time > (*i)->getNowtime())
-			{
-				(*i)->DoSomethingAwesome();
-				_Butterfly.push_back(*i);
-				i = _ScheduleButterfly.erase(i);
-			}
-			else
-				++i;
-		}
-
-	}
-	if (!_flying.empty())
-	{
-		for (auto i = _flying.begin(); i != _flying.end();)
-		{
-			bool FindTarget = false;
-			Model*Target;
-			for (auto j = (*i)->target.begin(); j != (*i)->target.end(); j++)
-			{
-				if (!(*j)->isDie())
-				{
-					FindTarget = true;
-					Target = *j;
-					break;
-				}
-			}
-			if (FindTarget)
-			{
-				Vec2 f1 = (*i)->getPosition();
-				Vec2 f2 = Target->getPosition();
-				Vec2 f3 = f2 - f1;
-				f3.x /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
-				f3.y /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
-				(*i)->setPosition(f3 + f1);
-				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 20 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 20) {
-
-					(*i)->setVisible(false);
-					(*i)->removeFromParent();
-					i = _flying.erase(i);
-				}
-				else
-					++i;
-			}
-			else
-				i = _flying.erase(i);
-		}
-	
-	}
-	if (!_Butterfly.empty())
-	{
-		for (auto i = _Butterfly.begin(); i != _Butterfly.end();)
-		{
-			
-			if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
-			{
-
-					(*i)->setVisible(false);
-					(*i)->removeFromParent();
-					i = _Butterfly.erase(i);
-			}
-			else if (out_of_windows((*i)->getPosition()))
-			{
-				(*i)->setVisible(false);
-				(*i)->removeFromParent();
-				i = _Butterfly.erase(i);
-			}
-			else
-			{
-				std::string dir = (*i)->getDirection();
-				Vec2 pos = (*i)->getPosition();
-				if (dir == "Left")
-				{
-					pos.x -= 7;
-				}
-				else if (dir == "Right")
-				{
-					pos.x += 7;
-				}
-				else if (dir == "Up")
-				{
-					pos.y += 7;
-				}
-				else if (dir == "Down")
-				{
-					pos.y -= 7;
-				}
-				else if (dir == "Left-Up")
-				{
-					pos.y += 4.95;
-					pos.x -= 4.95;
-				}
-				else if (dir == "Right-Up")
-				{
-					pos.y += 4.95;
-					pos.x += 4.95;
-				}
-				else if (dir == "Left-Down")
-				{
-					pos.y -= 4.95;
-					pos.x -= 4.95;
-				}
-				else if (dir == "Right-Down")
-				{
-					pos.y -= 4.95;
-					pos.x += 4.95;
-				}
-				(*i)->setPosition(pos);
-				i++;
-			}
-				
-		}
-
-	}
-
+	doFlying();
+	doButterfly();
+	doRangeSkill();
 	MoveMap(delta);
 }
 void GameScene::LoadingYaSeAnimation()
@@ -747,7 +615,51 @@ void GameScene::playerAttack_2()
 	}
 	else if (_player->getName() == "HouYi")
 	{
-
+		bool GetEnemy = false;
+		Model* cc;
+		RangeSkill* f = RangeSkill::createWithName("HouYi/HouYi/Attack3/0000.png");
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		{
+			GetEnemy = true;
+			cc = _enemy;
+		}
+		if (!enemy_flag.empty()||GetEnemy)
+		{
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				{
+					cc = (*i);
+					GetEnemy = true;
+					break;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime2 >= 15000 && GetEnemy)
+		{
+			f->setEndtime(GetCurrentTime() + 300);
+			f->setOpacity(120);
+			f->setVisible(true);
+			f->setScale(0.5f);
+			f->setPosition(cc->getPosition());
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - f->getPosition().x)*(_enemy->getPosition().x - f->getPosition().x) + (_enemy->getPosition().y - f->getPosition().y)*(_enemy->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width/4)
+		{
+			
+		}
+		if (!enemy_flag.empty())
+		{
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - f->getPosition().x)*((*i)->getPosition().x - f->getPosition().x) + ((*i)->getPosition().y - f->getPosition().y)*((*i)->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
+				{
+					
+				}
+			}
+		}
+		_RangeSkill.push_back(f);
+		_player->_attackTime2 = GetCurrentTime();
+			_tileMap->addChild(f, 10);
+		}
 	}
 }
 void GameScene::playerAttack_3()
@@ -781,7 +693,7 @@ void GameScene::playerAttack_3()
 				f->setOwner(_player);
 				_Scheduleflying.push_back(f);
 				f->setVisible(false);
-				_tileMap->addChild(f, 1);
+				_tileMap->addChild(f, 10);
 			}
 		}
 		if(isDo)
@@ -801,7 +713,7 @@ void GameScene::playerAttack_3()
 			_ScheduleButterfly.push_back(f);
 			f->setVisible(false);
 			f->setOwner(_player);
-			_tileMap->addChild(f, 1);
+			_tileMap->addChild(f, 10);
 		}
 	}
 }
@@ -839,6 +751,169 @@ void GameScene::MoveMap(float delta)
 	{
 		_tileMap->setPosition(v.x / 2 - x, 0);
 		now_x = v.x / 2 - x;
+	}
+}
+
+void GameScene::doRangeSkill()
+{
+	long long now_t = GetCurrentTime();
+	if (!_RangeSkill.empty())
+	{
+		for (auto i = _RangeSkill.begin(); i != _RangeSkill.end();)
+		{
+			if (now_t > (*i)->getEndtime())
+			{
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
+				i = _RangeSkill.erase(i);
+			}
+			else
+				i++;
+		}
+	}
+}
+
+void GameScene::doFlying()
+{
+	long long now_time = GetCurrentTime();
+	if (!_Scheduleflying.empty())
+	{
+		for (auto i = _Scheduleflying.begin(); i != _Scheduleflying.end();)
+		{
+
+			if (now_time > (*i)->getNowtime())
+			{
+				(*i)->DoSomethingAwesome();
+				_flying.push_back(*i);
+				i = _Scheduleflying.erase(i);
+			}
+			else
+				++i;
+		}
+
+	}
+	if (!_flying.empty())
+	{
+		for (auto i = _flying.begin(); i != _flying.end();)
+		{
+			bool FindTarget = false;
+			Model*Target;
+			for (auto j = (*i)->target.begin(); j != (*i)->target.end(); j++)
+			{
+				if (!(*j)->isDie())
+				{
+					FindTarget = true;
+					Target = *j;
+					break;
+				}
+			}
+			if (FindTarget)
+			{
+				Vec2 f1 = (*i)->getPosition();
+				Vec2 f2 = Target->getPosition();
+				Vec2 f3 = f2 - f1;
+				f3.x /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
+				f3.y /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
+				(*i)->setPosition(f3 + f1);
+				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 20 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 20) {
+
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _flying.erase(i);
+				}
+				else
+					++i;
+			}
+			else
+				i = _flying.erase(i);
+		}
+
+	}
+}
+
+void GameScene::doButterfly()
+{
+	long long now_time = GetCurrentTime();
+	if (!_ScheduleButterfly.empty())
+	{
+		for (auto i = _ScheduleButterfly.begin(); i != _ScheduleButterfly.end();)
+		{
+
+			if (now_time > (*i)->getNowtime())
+			{
+				(*i)->DoSomethingAwesome();
+				_Butterfly.push_back(*i);
+				i = _ScheduleButterfly.erase(i);
+			}
+			else
+				++i;
+		}
+
+	}
+	if (!_Butterfly.empty())
+	{
+		for (auto i = _Butterfly.begin(); i != _Butterfly.end();)
+		{
+
+			if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
+			{
+
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
+				i = _Butterfly.erase(i);
+			}
+			else if (out_of_windows((*i)->getPosition()))
+			{
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
+				i = _Butterfly.erase(i);
+			}
+			else
+			{
+				std::string dir = (*i)->getDirection();
+				Vec2 pos = (*i)->getPosition();
+				if (dir == "Left")
+				{
+					pos.x -= 7;
+				}
+				else if (dir == "Right")
+				{
+					pos.x += 7;
+				}
+				else if (dir == "Up")
+				{
+					pos.y += 7;
+				}
+				else if (dir == "Down")
+				{
+					pos.y -= 7;
+				}
+				else if (dir == "Left-Up")
+				{
+					pos.y += 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Up")
+				{
+					pos.y += 4.95;
+					pos.x += 4.95;
+				}
+				else if (dir == "Left-Down")
+				{
+					pos.y -= 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Down")
+				{
+					pos.y -= 4.95;
+					pos.x += 4.95;
+				}
+				(*i)->setPosition(pos);
+				i++;
+			}
+
+		}
+
 	}
 }
 
