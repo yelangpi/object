@@ -34,6 +34,7 @@ bool Hero::init(std::string name)
 
 void Hero::initWithProperty(std::string name)
 {
+	this->setEndTime(0);
 	if (name == "DaJi") 
 	{
 		setHp(3229);
@@ -48,8 +49,8 @@ void Hero::initWithProperty(std::string name)
 	}
 	else if (name=="YaSe")
 	{
-		setHp(0);
-		setCurrentHp(0);
+		setHp(11);
+		setCurrentHp(11);
 		setMp(0);
 		setCurrentMp(0);
 		setMagicAttack(0);
@@ -60,8 +61,8 @@ void Hero::initWithProperty(std::string name)
 	}
 	else if (name=="HouYi")
 	{
-		setHp(0);
-		setCurrentHp(0);
+		setHp(11);
+		setCurrentHp(11);
 		setMp(0);
 		setCurrentMp(0);
 		setMagicAttack(0);
@@ -89,65 +90,68 @@ Hero * Hero::CreateWithName(std::string name)
 }
 void Hero::Move(float delta)
 {
-	if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
+	if (!this->isDie() && GetCurrentTime() > this->getEndTime())
 	{
-		//WalkWithDirection("Left-Up");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x - 2, vec.y + 2));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
-	{
-		//WalkWithDirection("Left-Down");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x - 2, vec.y - 2));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
-	{
-		//WalkWithDirection("Right-Up");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x + 2, vec.y + 2));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
-	{
-		//WalkWithDirection("Right-Down");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x + 2, vec.y - 2));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W])
-	{
-		//WalkWithDirection("Up");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x, vec.y + 5));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S])
-	{
-		//WalkWithDirection("Down");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x, vec.y - 5));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
-	{
-		//WalkWithDirection("Right");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x + 20, vec.y));
-		return;
-	}
-	else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
-	{
-		//WalkWithDirection("Left");
-		auto vec = this->getPosition();
-		this->setPosition(Vec2(vec.x - 5, vec.y));
-		return;
-	}
-	else
-	{
-		//StopWalking();
+		if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
+		{
+			//WalkWithDirection("Left-Up");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x - 2, vec.y + 2));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
+		{
+			//WalkWithDirection("Left-Down");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x - 2, vec.y - 2));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
+		{
+			//WalkWithDirection("Right-Up");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x + 2, vec.y + 2));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
+		{
+			//WalkWithDirection("Right-Down");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x + 2, vec.y - 2));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_W])
+		{
+			//WalkWithDirection("Up");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x, vec.y + 5));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_S])
+		{
+			//WalkWithDirection("Down");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x, vec.y - 5));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_D])
+		{
+			//WalkWithDirection("Right");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x + 20, vec.y));
+			return;
+		}
+		else if (keys[cocos2d::EventKeyboard::KeyCode::KEY_A])
+		{
+			//WalkWithDirection("Left");
+			auto vec = this->getPosition();
+			this->setPosition(Vec2(vec.x - 5, vec.y));
+			return;
+		}
+		else
+		{
+			//StopWalking();
+		}
 	}
 }
 
