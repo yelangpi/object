@@ -42,160 +42,163 @@ void GameScene::onEnterTransitionDidFinish()
 }
 void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)
 {
-	switch (keycode) {
-	case cocos2d::EventKeyboard::KeyCode::KEY_W:
-		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = true;
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
-			_player->StopWalking("Left-Down");
-			_player->WalkWithDirection("Left-Up");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
-			_player->StopWalking("Right-Down");
-			_player->WalkWithDirection("Right-Up");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
-			_player->StopWalking("Down");
+	if (!_player->isDie()&&GetCurrentTime()>_player->getEndTime())
+	{
+		switch (keycode) {
+		case cocos2d::EventKeyboard::KeyCode::KEY_W:
+			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = true;
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+				_player->StopWalking("Left-Down");
+				_player->WalkWithDirection("Left-Up");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+				_player->StopWalking("Right-Down");
+				_player->WalkWithDirection("Right-Up");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+				_player->StopWalking("Down");
+				_player->WalkWithDirection("Up");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+				_player->StopWalking("Left");
+				_player->WalkWithDirection("Left-Up");
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+				_player->StopWalking("Right");
+				_player->WalkWithDirection("Right-Up");
+				return;
+			}
 			_player->WalkWithDirection("Up");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = false;
 			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
-			_player->StopWalking("Left");
-			_player->WalkWithDirection("Left-Up");
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
-			_player->StopWalking("Right");
-			_player->WalkWithDirection("Right-Up");
-			return;
-		}
-		_player->WalkWithDirection("Up");
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_S:
-		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = true;
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
-			_player->StopWalking("Left-Up");
-			_player->WalkWithDirection("Left-Down");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
-			_player->StopWalking("Right-Up");
-			_player->WalkWithDirection("Right-Down");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
-			_player->StopWalking("Up");
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_S:
+			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S] = true;
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+				_player->StopWalking("Left-Up");
+				_player->WalkWithDirection("Left-Down");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+				_player->StopWalking("Right-Up");
+				_player->WalkWithDirection("Right-Down");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+				_player->StopWalking("Up");
+				_player->WalkWithDirection("Down");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+				_player->StopWalking("Right");
+				_player->WalkWithDirection("Right-Down");
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+				_player->StopWalking("Left");
+				_player->WalkWithDirection("Left-Down");
+				return;
+			}
+
 			_player->WalkWithDirection("Down");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W] = false;
 			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
-			_player->StopWalking("Right");
-			_player->WalkWithDirection("Right-Down");
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
-			_player->StopWalking("Left");
-			_player->WalkWithDirection("Left-Down");
-			return;
-		}
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_D:
+			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = true;
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+				_player->StopWalking("Left-Up");
+				_player->WalkWithDirection("Right-Up");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+				_player->StopWalking("Left-Down");
+				_player->WalkWithDirection("Right-Down");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
+				_player->StopWalking("Left");
+				_player->WalkWithDirection("Right");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+				_player->StopWalking("Up");
+				_player->WalkWithDirection("Right-Up");
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+				_player->StopWalking("Down");
+				_player->WalkWithDirection("Right-Down");
+				return;
+			}
 
-		_player->WalkWithDirection("Down");
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_D:
-		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = true;
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
-			_player->StopWalking("Left-Up");
-			_player->WalkWithDirection("Right-Up");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
-			_player->StopWalking("Left-Down");
-			_player->WalkWithDirection("Right-Down");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A]) {
-			_player->StopWalking("Left");
 			_player->WalkWithDirection("Right");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = false;
 			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
-			_player->StopWalking("Up");
-			_player->WalkWithDirection("Right-Up");
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
-			_player->StopWalking("Down");
-			_player->WalkWithDirection("Right-Down");
-			return;
-		}
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_A:
+			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = true;
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+				_player->StopWalking("Right-Up");
+				_player->WalkWithDirection("Left-Up");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+				_player->StopWalking("Right-Down");
+				_player->WalkWithDirection("Left-Down");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
+				_player->StopWalking("Right");
+				_player->WalkWithDirection("Left");
+				_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
+				_player->StopWalking("Up");
+				_player->WalkWithDirection("Left-Up");
+				return;
+			}
+			if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
+				_player->StopWalking("Down");
+				_player->WalkWithDirection("Left-Down");
+				return;
+			}
 
-		_player->WalkWithDirection("Right");
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_A:
-		_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_A] = true;
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
-			_player->StopWalking("Right-Up");
-			_player->WalkWithDirection("Left-Up");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] && _player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
-			_player->StopWalking("Right-Down");
-			_player->WalkWithDirection("Left-Down");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
-			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D]) {
-			_player->StopWalking("Right");
 			_player->WalkWithDirection("Left");
-			_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_D] = false;
 			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_W]) {
-			_player->StopWalking("Up");
-			_player->WalkWithDirection("Left-Up");
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_J:
+			playerAttack();
 			return;
-		}
-		if (_player->keys[cocos2d::EventKeyboard::KeyCode::KEY_S]) {
-			_player->StopWalking("Down");
-			_player->WalkWithDirection("Left-Down");
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_1:
+			playerAttack_1();
 			return;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_2:
+			playerAttack_2();
+			return;
+			break;
+		case cocos2d::EventKeyboard::KeyCode::KEY_3:
+			playerAttack_3();
+			return;
+			break;
+		default:
+			break;
 		}
-
-		_player->WalkWithDirection("Left");
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_J:
-		playerAttack();
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_1:
-		playerAttack_1();
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_2:
-		playerAttack_2();
-		return;
-		break;
-	case cocos2d::EventKeyboard::KeyCode::KEY_3:
-		playerAttack_3();
-		return;
-		break;
-	default:
-		break;
 	}
 }
 void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)
@@ -304,6 +307,7 @@ void GameScene::update(float delta)
 	doFlying();
 	doButterfly();
 	doRangeSkill();
+	doShield();
 	SkillTime();
 	doHP();
 	doImpactWave();
@@ -322,20 +326,8 @@ void GameScene::LoadingYaSeAnimation()
 			animation_00[i]->addSpriteFrameWithFile(StringUtils::format("%s/%s/Attack/%s/000%d.PNG", "YaSe", "YaSe", dir[i].c_str(), j));
 		}
 		animation_00[i]->setDelayPerUnit(0.25f);
-		animation_00[i]->setLoops(-1);
+		animation_00[i]->setLoops(1);
 		AnimationCache::getInstance()->addAnimation(animation_00[i], StringUtils::format("%s_attack_%s", "YaSe", dir[i].c_str()));
-	}
-	Animation* animation_01[8];
-	for (int i = 0; i < 8; i++)
-	{
-		animation_01[i] = Animation::create();
-		for (int j = 0; j <= Dirction_Animation_Attack_Number[std::make_pair("YaSe", dir[i])]; j++)
-		{
-			animation_01[i]->addSpriteFrameWithFile(StringUtils::format("%s/%s/Skill1/%s/000%d.PNG", "YaSe", "YaSe", dir[i].c_str(), j));
-		}
-		animation_01[i]->setDelayPerUnit(0.25f);
-		animation_01[i]->setLoops(-1);
-		AnimationCache::getInstance()->addAnimation(animation_01[i], StringUtils::format("%s_skill1_%s", "YaSe", dir[i].c_str()));
 	}
 }
 void GameScene::LoadingAnimation(std::string sprite_name)
@@ -389,7 +381,149 @@ void GameScene::playerAttack()
 	}
 	else if (_player->getName() == "YaSe")
 	{
+		auto dir = _player->Now_Direction;
+		_player->stopAllActions();
+		Animation* animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("%s_attack_%s", _player->getName().c_str(), dir.c_str()));
+		Animate *action = Animate::create(animation);
+		_player->runAction(action);
+		if (_player->getEndTime() < GetCurrentTime() + 1000)
+			_player->setEndTime(GetCurrentTime() + 1000);
+		if (!_enemy->isDie())
+		{
+			Vec2 v1 = _player->getPosition();
+			Vec2 v2 = _enemy->getPosition();
+			Vec2 v = v2 - v1;
+			auto dir = _player->Now_Direction;
+			if (v1.getDistance(v2) < 200)
+			{
+				if (dir == "Left")
+				{
+					if ((v.getAngle() >= 3.14/2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right")
+				{
+					if ((v.getAngle() >= -3.14/2 && v.getAngle() <= 3.14 / 2))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+					
+				}
+				else if (dir == "Up")
+				{
+					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Down")
+				{
+					float c = v.getAngle();
+					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Up")
+				{
+					if ((v.getAngle() >= 3.14/4 && v.getAngle() <= 3.14)||(v.getAngle() >= -3.14 && v.getAngle() <= -3*3.14 / 4))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Down")
+				{
+					if ((v.getAngle() >= 3*3.14 / 4 && v.getAngle() <=  3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Up")
+				{
+					if ((v.getAngle() >= -3.14/4 && v.getAngle() <= 3 * 3.14 / 4))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Down")
+				{
+					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14/4 ))
+					{
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+					}
+				}
+			}
+		}
+		for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+		{
+			Vec2 v1 = _player->getPosition();
+			Vec2 v2 = (*i)->getPosition();
+			Vec2 v = v2 - v1;
+			auto dir = _player->Now_Direction;
+			if (v1.getDistance(v2) < 200)
+			{
+				if (dir == "Left")
+				{
+					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right")
+				{
+					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
 
+				}
+				else if (dir == "Up")
+				{
+					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Down")
+				{
+					float c = v.getAngle();
+					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Up")
+				{
+					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Down")
+				{
+					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Up")
+				{
+					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Down")
+				{
+					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+			}
+		}
 	}
 	else if (_player->getName() == "HouYi")
 	{
@@ -508,6 +642,58 @@ void GameScene::playerAttack_1()
 			_ImpactWave.push_back(f);
 		}
 	}
+	else if (_player->getName() == "YaSe")
+	{
+
+	}
+	else if(_player->getName() == "HouYi")
+	{
+		long long now_time = GetCurrentTime();
+		if (now_time - _player->_attackTime1 > 8000)
+		{
+			_player->_attackTime1 = now_time;
+		}
+		else return;
+		auto dir = _player->Now_Direction;
+		Vec2 v = _player->getPosition();
+		if (dir == "Left")
+		{
+			v.x -= 100;
+		}
+		else if (dir == "Right")
+		{
+			v.x += 100;
+		}
+		else if (dir == "Up")
+		{
+			v.y += 100;
+		}
+		else if (dir == "Down")
+		{
+			v.y -= 100;
+		}
+		else if (dir == "Left-Up")
+		{
+			v.x -= 100 / 1.414;
+			v.y += 100 / 1.414;
+		}
+		else if (dir == "Left-Down")
+		{
+			v.x -= 100 / 1.414;
+			v.y -= 100 / 1.414;
+		}
+		else if (dir == "Right-Up")
+		{
+			v.x += 100 / 1.414;
+			v.y += 100 / 1.414;
+		}
+		else if (dir == "Right-Down")
+		{
+			v.x += 100 / 1.414;
+			v.y -= 100 / 1.414;
+		}
+		_player->setPosition(v);
+	}
 }
 void GameScene::playerAttack_2()
 {
@@ -550,7 +736,58 @@ void GameScene::playerAttack_2()
 	}
 	else if (_player->getName() == "YaSe")
 	{
-
+		if (GetCurrentTime() - _player->_attackTime2 >= 12000)
+		{
+			Shield* f1 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai.PNG");
+			_player->_attackTime2 = GetCurrentTime();
+			f1->setNowtime(GetCurrentTime() + 34);
+			f1->setEndtime(GetCurrentTime() + 3034);
+			f1->setOwner(_player);
+			f1->setDirection("Up");
+			f1->setVisible(false);
+			_Shield.push_back(f1);
+			_tileMap->addChild(f1, 10);
+			if (!_enemy->isDie())
+				f1->target.push_back(_enemy);
+			for(auto i=enemy_flag.begin();i!=enemy_flag.end();i++)
+				f1->target.push_back(*i);
+			Shield* f2 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai2.PNG");
+			f2->setNowtime(GetCurrentTime() + 34);
+			f2->setEndtime(GetCurrentTime() + 3034);
+			f2->setOwner(_player);
+			f2->setDirection("Down");
+			f2->setVisible(false);
+			_Shield.push_back(f2);
+			_tileMap->addChild(f2, 10);
+			if (!_enemy->isDie())
+				f2->target.push_back(_enemy);
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+				f2->target.push_back(*i);
+			Shield* f3 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai3.PNG");
+			f3->setNowtime(GetCurrentTime() + 34);
+			f3->setEndtime(GetCurrentTime() + 3034);
+			f3->setOwner(_player);
+			f3->setDirection("Left");
+			f3->setVisible(false);
+			_Shield.push_back(f3);
+			_tileMap->addChild(f3, 10);
+			if (!_enemy->isDie())
+				f3->target.push_back(_enemy);
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+				f3->target.push_back(*i);
+			Shield* f4 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai6.PNG");
+			f4->setNowtime(GetCurrentTime() + 34);
+			f4->setEndtime(GetCurrentTime() + 3034);
+			f4->setOwner(_player);
+			f4->setDirection("Right");
+			f4->setVisible(false);
+			_Shield.push_back(f4);
+			_tileMap->addChild(f4, 10);
+			if (!_enemy->isDie())
+				f4->target.push_back(_enemy);
+			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+				f4->target.push_back(*i);
+		}
 	}
 	else if (_player->getName() == "HouYi")
 	{
@@ -641,7 +878,17 @@ void GameScene::playerAttack_3()
 	}
 	else if (_player->getName() == "YaSe")
 	{
-
+		if (GetCurrentTime() - _player->_attackTime3 >= 18000)
+		{
+			
+			Vec2 v1 = _player->getPosition();
+			Vec2 v2 = _enemy->getPosition();
+			if (v1.getDistance(v2) < 500)
+			{
+				_player->_attackTime3 = GetCurrentTime();
+				_player->setPosition(v2);
+			}
+		}
 	}
 	else if (_player->getName() == "HouYi")
 	{
@@ -956,6 +1203,58 @@ void GameScene::doImpactWave()
 	}
 }
 
+void GameScene::doShield()
+{
+	long long now_time = GetCurrentTime();
+	
+	for (auto i = _Shield.begin(); i != _Shield.end();)
+	{
+		(*i)->setVisible(true);
+		auto dir = (*i)->getDirection();
+		Vec2 v = (*i)->getOwner()->getPosition();
+		if (dir == "Left")
+		{
+			v.x -= 50;
+		}
+		else if (dir == "Right")
+		{
+			v.x += 50;
+		}
+		else if (dir == "Up")
+		{
+			v.y += 50;
+		}
+		else if (dir == "Down")
+		{
+			v.y -= 50;
+		}
+		(*i)->setPosition(v);
+		if (now_time >(*i)->getNowtime())
+		{
+			(*i)->setNowtime((*i)->getNowtime() + 1000);
+			for (auto j = (*i)->target.begin(); j != (*i)->target.end(); j++)
+			{
+				Vec2 v1 = (*j)->getPosition();
+				float xx = v1.getDistance(v);
+				Size sz = (*j)->getContentSize();
+				float yy = MAX(sz.width / 2, sz.height / 2);
+				if (xx < yy)
+				{
+					(*j)->setCurrentHp((*j)->getCurrentHp() - 100);
+				}
+			}
+		}
+		if (now_time > (*i)->getEndtime())
+		{
+			(*i)->setVisible(false);
+			(*i)->removeFromParent();
+			i = _Shield.erase(i);
+		}
+		else i++;
+	}
+
+}
+
 void GameScene::initMap()
 {
 	Vec2 v1 = Director::getInstance()->getWinSize();
@@ -1024,6 +1323,7 @@ void GameScene::initAnimation()
 	LoadingAnimation("DaJi");
 	LoadingAnimation("YaSe");
 	LoadingAnimation("HouYi");
+	LoadingYaSeAnimation();
 	//
 
 }
@@ -1085,6 +1385,7 @@ void GameScene::initHP()
 	cocos2d::Sprite*HPrectangle= cocos2d::Sprite::create("xuetiao/xuetiao1.png");
 	
 }
+
 void GameScene::SkillTime()
 {
 	long long now_time = GetCurrentTime();
@@ -1128,4 +1429,5 @@ void GameScene::doHP()
 	_player->doHP();
 	_enemy->doHP();
 }
+
 

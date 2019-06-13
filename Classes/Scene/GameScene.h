@@ -6,6 +6,7 @@
 #include"Model/Butterfly.h"
 #include"Model/RangeSkill.h"
 #include"Model/ImpactWave.h"
+#include"Model/Shield.h"
 #include<vector>
 class GameScene : public cocos2d::Layer
 {
@@ -41,6 +42,7 @@ public:
 	std::vector<Butterfly*>_ScheduleButterfly;
 	std::vector<RangeSkill*>_RangeSkill;
 	std::vector<ImpactWave*>_ImpactWave;
+	std::vector<Shield*>_Shield;
 	void playerAttack();
 	void playerAttack_1();
 	void playerAttack_2();
@@ -54,6 +56,7 @@ public:
 	void doFlying();
 	void doButterfly();
 	void doImpactWave();
+	void doShield();
 	void initMap();
 	void initAnimation();
 	void initHero();
