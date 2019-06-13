@@ -47,6 +47,10 @@ public:
 	void playerAttack_1();
 	void playerAttack_2();
 	void playerAttack_3();
+	void enemyAttack();
+	void enemyAttack_1();
+	void enemyAttack_2();
+	void enemyAttack_3();
 	std::vector<Model*>player_flag;
 	std::vector<Model*>enemy_flag;
 	bool out_of_windows(cocos2d::Vec2 v);

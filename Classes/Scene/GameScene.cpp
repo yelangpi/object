@@ -303,6 +303,7 @@ GameScene * GameScene::createWithName(std::string name1,std::string name2)
 void GameScene::update(float delta)
 {
 	_player->Move(delta);
+	_enemy->Move(delta);
 	long long now_time = GetCurrentTime();
 	doFlying();
 	doButterfly();
@@ -372,11 +373,13 @@ void GameScene::playerAttack()
 		}
 		if (GetCurrentTime() - _player->_attackTime >= 500 && GetEnemy) {
 			_player->_attackTime = GetCurrentTime();
+			if(_player->getEndTime()< GetCurrentTime() + 250)
+			_player->setEndTime(GetCurrentTime() + 250);
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_player);
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
-			_tileMap->addChild(f, 1);
+			_tileMap->addChild(f, 10);
 		}
 	}
 	else if (_player->getName() == "YaSe")
@@ -398,18 +401,18 @@ void GameScene::playerAttack()
 			{
 				if (dir == "Left")
 				{
-					if ((v.getAngle() >= 3.14/2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
+					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
 				}
 				else if (dir == "Right")
 				{
-					if ((v.getAngle() >= -3.14/2 && v.getAngle() <= 3.14 / 2))
+					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
-					
+
 				}
 				else if (dir == "Up")
 				{
@@ -428,28 +431,28 @@ void GameScene::playerAttack()
 				}
 				else if (dir == "Left-Up")
 				{
-					if ((v.getAngle() >= 3.14/4 && v.getAngle() <= 3.14)||(v.getAngle() >= -3.14 && v.getAngle() <= -3*3.14 / 4))
+					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
 				}
 				else if (dir == "Left-Down")
 				{
-					if ((v.getAngle() >= 3*3.14 / 4 && v.getAngle() <=  3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
+					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
 				}
 				else if (dir == "Right-Up")
 				{
-					if ((v.getAngle() >= -3.14/4 && v.getAngle() <= 3 * 3.14 / 4))
+					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
 				}
 				else if (dir == "Right-Down")
 				{
-					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14/4 ))
+					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
 					{
 						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
 					}
@@ -528,10 +531,12 @@ void GameScene::playerAttack()
 	else if (_player->getName() == "HouYi")
 	{
 		bool GetEnemy = false;
+		Model* cc;
 		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
 		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
 		{
 			f->target.push_back(_enemy);
+			if (!GetEnemy)cc = _enemy;
 			GetEnemy = true;
 
 		}
@@ -542,17 +547,46 @@ void GameScene::playerAttack()
 				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
 				{
 					f->target.push_back(*i);
+					if (!GetEnemy)cc = *i;
 					GetEnemy = true;
 				}
 			}
 		}
-		if (GetCurrentTime() - _player->_attackTime >= 300 && GetEnemy) {
+		if (GetCurrentTime() - _player->_attackTime >= 500 && GetEnemy)
+		{
 			_player->_attackTime = GetCurrentTime();
+			_player->stopAllActions();
+			if (_player->getEndTime() < GetCurrentTime() + 250)
+			_player->setEndTime(GetCurrentTime() + 250);
+			Vec2 v1 = _player->getPosition();
+			Vec2 v2 = cc->getPosition();
+			Vec2 v = v2 - v1;
+			float an = v.getAngle();
+			std::string str;
+			if (an >= -3.14 / 4 && an <= 3.14 / 4)
+			{
+				str = "Right";
+			}
+			else if (an >= 3.14 / 4 && an <= 3 * 3.14 / 4)
+			{
+				str = "Up";
+			}
+			else if ((an >= 3*3.14 / 4 && an <= 3.14)|| (an >= -3.14 && an <= -3*3.14/4))
+			{
+				str = "Left";
+			}
+			else if (an >= -3*3.14 / 4 && an <= -3.14 / 4)
+			{
+				str = "Down";
+			}
+			_player->initWithFile(StringUtils::format("HouYi/HouYi/Walk/%s/0000.PNG",str.c_str()));
+			_player->Now_Direction = str;
+			f->initWithFile(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_player);
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
-			_tileMap->addChild(f, 1);
+			_tileMap->addChild(f, 10);
 		}
 	}
 }
@@ -799,7 +833,7 @@ void GameScene::playerAttack_2()
 			GetEnemy = true;
 			cc = _enemy;
 		}
-		if (!enemy_flag.empty()||GetEnemy)
+		if (!enemy_flag.empty()&&!GetEnemy)
 		{
 			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 			{
@@ -883,7 +917,7 @@ void GameScene::playerAttack_3()
 			
 			Vec2 v1 = _player->getPosition();
 			Vec2 v2 = _enemy->getPosition();
-			if (v1.getDistance(v2) < 500)
+			if (v1.getDistance(v2) < 500&&_enemy->isDie())
 			{
 				_player->_attackTime3 = GetCurrentTime();
 				_player->setPosition(v2);
@@ -900,6 +934,598 @@ void GameScene::playerAttack_3()
 			_ScheduleButterfly.push_back(f);
 			f->setVisible(false);
 			f->setOwner(_player);
+			_tileMap->addChild(f, 10);
+		}
+	}
+}
+
+//
+void GameScene::enemyAttack()
+{
+	if (_enemy->getName() == "DaJi")
+	{
+		bool GetEnemy = false;
+		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _enemy->Now_Direction.c_str()));
+		if ((!_player->isDie()) && (_player->getPosition().x - _enemy->getPosition().x)*(_player->getPosition().x - _enemy->getPosition().x) + (_player->getPosition().y - _enemy->getPosition().y)*(_player->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+		{
+			f->target.push_back(_player);
+			GetEnemy = true;
+
+		}
+		if (!player_flag.empty())
+		{
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _enemy->_attackTime >= 500 && GetEnemy) {
+			_enemy->_attackTime = GetCurrentTime();
+			if (_enemy->getEndTime() < GetCurrentTime() + 250)
+				_enemy->setEndTime(GetCurrentTime() + 250);
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_enemy);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+	}
+	else if (_enemy->getName() == "YaSe")
+	{
+		auto dir = _enemy->Now_Direction;
+		_enemy->stopAllActions();
+		Animation* animation = AnimationCache::getInstance()->getAnimation(StringUtils::format("%s_attack_%s", _enemy->getName().c_str(), dir.c_str()));
+		Animate *action = Animate::create(animation);
+		_enemy->runAction(action);
+		if (_enemy->getEndTime() < GetCurrentTime() + 1000)
+			_enemy->setEndTime(GetCurrentTime() + 1000);
+		if (!_player->isDie())
+		{
+			Vec2 v1 = _enemy->getPosition();
+			Vec2 v2 = _player->getPosition();
+			Vec2 v = v2 - v1;
+			auto dir = _enemy->Now_Direction;
+			if (v1.getDistance(v2) < 200)
+			{
+				if (dir == "Left")
+				{
+					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right")
+				{
+					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+
+				}
+				else if (dir == "Up")
+				{
+					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Down")
+				{
+					float c = v.getAngle();
+					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Up")
+				{
+					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Down")
+				{
+					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Up")
+				{
+					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Down")
+				{
+					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
+					{
+						_player->setCurrentHp(_player->getCurrentHp() - 100);
+					}
+				}
+			}
+		}
+		for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+		{
+			Vec2 v1 = _enemy->getPosition();
+			Vec2 v2 = (*i)->getPosition();
+			Vec2 v = v2 - v1;
+			auto dir = _enemy->Now_Direction;
+			if (v1.getDistance(v2) < 200)
+			{
+				if (dir == "Left")
+				{
+					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right")
+				{
+					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+
+				}
+				else if (dir == "Up")
+				{
+					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Down")
+				{
+					float c = v.getAngle();
+					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Up")
+				{
+					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Left-Down")
+				{
+					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Up")
+				{
+					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+				else if (dir == "Right-Down")
+				{
+					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
+					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+					}
+				}
+			}
+		}
+	}
+	else if (_enemy->getName() == "HouYi")
+	{
+		bool GetEnemy = false;
+		Model* cc;
+		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
+		if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		{
+			f->target.push_back(_player);
+			if (!GetEnemy)cc = _player;
+			GetEnemy = true;
+
+		}
+		if (!player_flag.empty())
+		{
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					if (!GetEnemy)cc = *i;
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _enemy->_attackTime >= 500 && GetEnemy)
+		{
+			_enemy->_attackTime = GetCurrentTime();
+			_enemy->stopAllActions();
+			if (_enemy->getEndTime() < GetCurrentTime() + 250)
+				_enemy->setEndTime(GetCurrentTime() + 250);
+			Vec2 v1 = _enemy->getPosition();
+			Vec2 v2 = cc->getPosition();
+			Vec2 v = v2 - v1;
+			float an = v.getAngle();
+			std::string str;
+			if (an >= -3.14 / 4 && an <= 3.14 / 4)
+			{
+				str = "Right";
+			}
+			else if (an >= 3.14 / 4 && an <= 3 * 3.14 / 4)
+			{
+				str = "Up";
+			}
+			else if ((an >= 3 * 3.14 / 4 && an <= 3.14) || (an >= -3.14 && an <= -3 * 3.14 / 4))
+			{
+				str = "Left";
+			}
+			else if (an >= -3 * 3.14 / 4 && an <= -3.14 / 4)
+			{
+				str = "Down";
+			}
+			_enemy->initWithFile(StringUtils::format("HouYi/HouYi/Walk/%s/0000.PNG", str.c_str()));
+			_enemy->Now_Direction = str;
+			f->initWithFile(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_enemy);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+	}
+}
+void GameScene::enemyAttack_1()
+{
+	//冷却时间   8 seconds
+	if (_enemy->getName() == "DaJi")
+	{
+		ImpactWave*f = ImpactWave::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/ImpactWave/%s/0000.PNG", _enemy->Now_Direction.c_str()));
+		long long now_time = GetCurrentTime();
+		if (now_time - _enemy->_attackTime1 >= 8000)
+		{
+			_enemy->_attackTime1 = now_time;
+			f->setFlag(_enemy->getFlag());
+			f->setEndtime(now_time + 1500);
+			f->setDirection(_enemy->Now_Direction);
+			cocos2d::Vec2 ballposition = _enemy->getPosition();
+			float x = 5.0f;
+			if (f->_direction == "Left")
+			{
+				ballposition.x -= x;
+			}
+			else if (f->_direction == "Right")
+			{
+				ballposition.x += x;
+			}
+			else if (f->_direction == "Up")
+			{
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Down")
+			{
+				ballposition.y -= x;
+			}
+			else if (f->_direction == "Left-Up")
+			{
+				ballposition.x -= x;
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Left-Down")
+			{
+				ballposition.x -= x;
+				ballposition.y -= x;
+			}
+			else if (f->_direction == "Right-Up")
+			{
+				ballposition.x += x;
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Right-Down")
+			{
+				ballposition.x += x;
+				ballposition.y -= x;
+			}
+			if (!_player->isDie())
+			{
+				f->target.push_back(_player);
+				if (f->_direction == "Up" || f->_direction == "Down")
+				{
+					f->target_length.push_back(_player->getPosition().y - f->getPosition().y);
+				}
+				else
+				{
+					f->target_length.push_back(_player->getPosition().x - f->getPosition().x);
+
+				}
+			}
+			if (!player_flag.empty())
+			{
+				for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				{
+					f->target.push_back(*i);
+					if (f->_direction == "Up" || f->_direction == "Down")
+					{
+						f->target_length.push_back((*i)->getPosition().y - f->getPosition().y);
+					}
+					else
+					{
+						f->target_length.push_back((*i)->getPosition().x - f->getPosition().x);
+
+					}
+				}
+			}
+			f->setPosition(ballposition);
+			f->setVisible(true);
+			_tileMap->addChild(f, 10);
+			_ImpactWave.push_back(f);
+		}
+	}
+	else if (_enemy->getName() == "YaSe")
+	{
+
+	}
+	else if (_enemy->getName() == "HouYi")
+	{
+		long long now_time = GetCurrentTime();
+		if (now_time - _enemy->_attackTime1 > 8000)
+		{
+			_enemy->_attackTime1 = now_time;
+		}
+		else return;
+		auto dir = _enemy->Now_Direction;
+		Vec2 v = _enemy->getPosition();
+		if (dir == "Left")
+		{
+			v.x -= 100;
+		}
+		else if (dir == "Right")
+		{
+			v.x += 100;
+		}
+		else if (dir == "Up")
+		{
+			v.y += 100;
+		}
+		else if (dir == "Down")
+		{
+			v.y -= 100;
+		}
+		else if (dir == "Left-Up")
+		{
+			v.x -= 100 / 1.414;
+			v.y += 100 / 1.414;
+		}
+		else if (dir == "Left-Down")
+		{
+			v.x -= 100 / 1.414;
+			v.y -= 100 / 1.414;
+		}
+		else if (dir == "Right-Up")
+		{
+			v.x += 100 / 1.414;
+			v.y += 100 / 1.414;
+		}
+		else if (dir == "Right-Down")
+		{
+			v.x += 100 / 1.414;
+			v.y -= 100 / 1.414;
+		}
+		_enemy->setPosition(v);
+	}
+}
+void GameScene::enemyAttack_2()
+{
+	//冷却时间 12 seconds
+	if (_enemy->getName() == "DaJi")
+	{
+		bool isDo = false;
+		bool GetEnemy = false;
+		FlyingBox* f = FlyingBox::createWithName("DaJi/DaJi/Skill2/0001.PNG");
+		if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+		{
+			f->target.push_back(_player);
+			GetEnemy = true;
+
+		}
+		if (!player_flag.empty())
+		{
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				{
+					f->target.push_back(*i);
+					GetEnemy = true;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime2 >= 12000 && GetEnemy)
+		{
+			isDo = true;
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setOwner(_enemy);
+			_Scheduleflying.push_back(f);
+			f->setVisible(false);
+			_tileMap->addChild(f, 1);
+		}
+		if (isDo)
+		{
+			_enemy->_attackTime2 = GetCurrentTime();
+		}
+	}
+	else if (_enemy->getName() == "YaSe")
+	{
+		if (GetCurrentTime() - _enemy->_attackTime2 >= 12000)
+		{
+			Shield* f1 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai.PNG");
+			_enemy->_attackTime2 = GetCurrentTime();
+			f1->setNowtime(GetCurrentTime() + 34);
+			f1->setEndtime(GetCurrentTime() + 3034);
+			f1->setOwner(_enemy);
+			f1->setDirection("Up");
+			f1->setVisible(false);
+			_Shield.push_back(f1);
+			_tileMap->addChild(f1, 10);
+			if (!_player->isDie())
+				f1->target.push_back(_player);
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				f1->target.push_back(*i);
+			Shield* f2 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai2.PNG");
+			f2->setNowtime(GetCurrentTime() + 34);
+			f2->setEndtime(GetCurrentTime() + 3034);
+			f2->setOwner(_enemy);
+			f2->setDirection("Down");
+			f2->setVisible(false);
+			_Shield.push_back(f2);
+			_tileMap->addChild(f2, 10);
+			if (!_player->isDie())
+				f2->target.push_back(_player);
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				f2->target.push_back(*i);
+			Shield* f3 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai3.PNG");
+			f3->setNowtime(GetCurrentTime() + 34);
+			f3->setEndtime(GetCurrentTime() + 3034);
+			f3->setOwner(_enemy);
+			f3->setDirection("Left");
+			f3->setVisible(false);
+			_Shield.push_back(f3);
+			_tileMap->addChild(f3, 10);
+			if (!_player->isDie())
+				f3->target.push_back(_player);
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				f3->target.push_back(*i);
+			Shield* f4 = Shield::createWithName("YaSe/YaSe/dunpai/dunpai6.PNG");
+			f4->setNowtime(GetCurrentTime() + 34);
+			f4->setEndtime(GetCurrentTime() + 3034);
+			f4->setOwner(_enemy);
+			f4->setDirection("Right");
+			f4->setVisible(false);
+			_Shield.push_back(f4);
+			_tileMap->addChild(f4, 10);
+			if (!_player->isDie())
+				f4->target.push_back(_player);
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				f4->target.push_back(*i);
+		}
+	}
+	else if (_enemy->getName() == "HouYi")
+	{
+		bool GetEnemy = false;
+		Model* cc;
+		RangeSkill* f = RangeSkill::createWithName("HouYi/HouYi/Attack3/0000.png");
+		if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		{
+			GetEnemy = true;
+			cc = _player;
+		}
+		if (!player_flag.empty() && !GetEnemy)
+		{
+			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+			{
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				{
+					cc = (*i);
+					GetEnemy = true;
+					break;
+				}
+			}
+		}
+		if (GetCurrentTime() - _player->_attackTime2 >= 12000 && GetEnemy)
+		{
+			f->setEndtime(GetCurrentTime() + 300);
+			f->setOpacity(120);
+			f->setVisible(true);
+			f->setScale(0.5f);
+			f->setPosition(cc->getPosition());
+			if ((!_player->isDie()) && (_player->getPosition().x - f->getPosition().x)*(_player->getPosition().x - f->getPosition().x) + (_player->getPosition().y - f->getPosition().y)*(_player->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
+			{
+				
+			}
+			if (!player_flag.empty())
+			{
+				for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				{
+					if (((*i)->getPosition().x - f->getPosition().x)*((*i)->getPosition().x - f->getPosition().x) + ((*i)->getPosition().y - f->getPosition().y)*((*i)->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
+					{
+
+					}
+				}
+			}
+			_RangeSkill.push_back(f);
+			_enemy->_attackTime2 = GetCurrentTime();
+			_tileMap->addChild(f, 10);
+		}
+	}
+}
+void GameScene::enemyAttack_3()
+{
+	//冷却时间  18 seconds
+	if (_enemy->getName() == "DaJi")
+	{
+		bool isDo = false;
+		for (int a = 1; a <= 5; a++) {
+			bool GetEnemy = false;
+			FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _enemy->Now_Direction.c_str()));
+			if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+			{
+				f->target.push_back(_player);
+				GetEnemy = true;
+
+			}
+			if (!player_flag.empty())
+			{
+				for (auto i = player_flag.begin(); i != player_flag.end(); i++)
+				{
+					if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+					{
+						f->target.push_back(*i);
+						GetEnemy = true;
+					}
+				}
+			}
+			if (GetCurrentTime() - _enemy->_attackTime3 >= 18000 && GetEnemy) {
+				isDo = true;
+				f->setNowtime(GetCurrentTime() + 34 + (a - 1) * 200);
+				f->setOwner(_enemy);
+				_Scheduleflying.push_back(f);
+				f->setVisible(false);
+				_tileMap->addChild(f, 10);
+			}
+		}
+		if (isDo)
+			_enemy->_attackTime3 = GetCurrentTime();
+	}
+	else if (_enemy->getName() == "YaSe")
+	{
+		if (GetCurrentTime() - _player->_attackTime3 >= 18000)
+		{
+
+			Vec2 v1 = _enemy->getPosition();
+			Vec2 v2 = _player->getPosition();
+			if (v1.getDistance(v2) < 500&&!_player->isDie())
+			{
+				_enemy->_attackTime3 = GetCurrentTime();
+				_enemy->setPosition(v2);
+			}
+		}
+	}
+	else if (_enemy->getName() == "HouYi")
+	{
+		Butterfly* f = Butterfly::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack2/%s/0000.PNG", _enemy->Now_Direction.c_str()));
+		if (GetCurrentTime() - _enemy->_attackTime3 >= 18000) {
+			_enemy->_attackTime3 = GetCurrentTime();
+			f->setNowtime(GetCurrentTime() + 34);
+			f->setDirection(_enemy->Now_Direction);
+			_ScheduleButterfly.push_back(f);
+			f->setVisible(false);
+			f->setOwner(_enemy);
 			_tileMap->addChild(f, 10);
 		}
 	}
@@ -1046,64 +1672,124 @@ void GameScene::doButterfly()
 	{
 		for (auto i = _Butterfly.begin(); i != _Butterfly.end();)
 		{
-
-			if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
+			if ((*i)->getOwner() == _player) 
 			{
+				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
+				{
 
-				(*i)->setVisible(false);
-				(*i)->removeFromParent();
-				i = _Butterfly.erase(i);
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _Butterfly.erase(i);
+				}
+				else if (out_of_windows((*i)->getPosition()))
+				{
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _Butterfly.erase(i);
+				}
+				else
+				{
+					std::string dir = (*i)->getDirection();
+					Vec2 pos = (*i)->getPosition();
+					if (dir == "Left")
+					{
+						pos.x -= 7;
+					}
+					else if (dir == "Right")
+					{
+						pos.x += 7;
+					}
+					else if (dir == "Up")
+					{
+						pos.y += 7;
+					}
+					else if (dir == "Down")
+					{
+						pos.y -= 7;
+					}
+					else if (dir == "Left-Up")
+					{
+						pos.y += 4.95;
+						pos.x -= 4.95;
+					}
+					else if (dir == "Right-Up")
+					{
+						pos.y += 4.95;
+						pos.x += 4.95;
+					}
+					else if (dir == "Left-Down")
+					{
+						pos.y -= 4.95;
+						pos.x -= 4.95;
+					}
+					else if (dir == "Right-Down")
+					{
+						pos.y -= 4.95;
+						pos.x += 4.95;
+					}
+					(*i)->setPosition(pos);
+					i++;
+				}
 			}
-			else if (out_of_windows((*i)->getPosition()))
+			else if ((*i)->getOwner() == _enemy)
 			{
-				(*i)->setVisible(false);
-				(*i)->removeFromParent();
-				i = _Butterfly.erase(i);
-			}
-			else
-			{
-				std::string dir = (*i)->getDirection();
-				Vec2 pos = (*i)->getPosition();
-				if (dir == "Left")
+				if (abs((*i)->getPosition().x - _player->getPosition().x) <= 50 && abs((*i)->getPosition().y - _player->getPosition().y) <= 50)
 				{
-					pos.x -= 7;
-				}
-				else if (dir == "Right")
-				{
-					pos.x += 7;
-				}
-				else if (dir == "Up")
-				{
-					pos.y += 7;
-				}
-				else if (dir == "Down")
-				{
-					pos.y -= 7;
-				}
-				else if (dir == "Left-Up")
-				{
-					pos.y += 4.95;
-					pos.x -= 4.95;
-				}
-				else if (dir == "Right-Up")
-				{
-					pos.y += 4.95;
-					pos.x += 4.95;
-				}
-				else if (dir == "Left-Down")
-				{
-					pos.y -= 4.95;
-					pos.x -= 4.95;
-				}
-				else if (dir == "Right-Down")
-				{
-					pos.y -= 4.95;
-					pos.x += 4.95;
-				}
-				(*i)->setPosition(pos);
-				i++;
-			}
 
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _Butterfly.erase(i);
+				}
+				else if (out_of_windows((*i)->getPosition()))
+				{
+					(*i)->setVisible(false);
+					(*i)->removeFromParent();
+					i = _Butterfly.erase(i);
+				}
+				else
+				{
+					std::string dir = (*i)->getDirection();
+					Vec2 pos = (*i)->getPosition();
+					if (dir == "Left")
+					{
+						pos.x -= 7;
+					}
+					else if (dir == "Right")
+					{
+						pos.x += 7;
+					}
+					else if (dir == "Up")
+					{
+						pos.y += 7;
+					}
+					else if (dir == "Down")
+					{
+						pos.y -= 7;
+					}
+					else if (dir == "Left-Up")
+					{
+						pos.y += 4.95;
+						pos.x -= 4.95;
+					}
+					else if (dir == "Right-Up")
+					{
+						pos.y += 4.95;
+						pos.x += 4.95;
+					}
+					else if (dir == "Left-Down")
+					{
+						pos.y -= 4.95;
+						pos.x -= 4.95;
+					}
+					else if (dir == "Right-Down")
+					{
+						pos.y -= 4.95;
+						pos.x += 4.95;
+					}
+					(*i)->setPosition(pos);
+					i++;
+				}
+			}
 		}
 
 	}
@@ -1341,6 +2027,7 @@ void GameScene::initHero()
 	_enemy->setFlag(Flag::RED);
 	_tileMap->addChild(player, 6);
 	_tileMap->addChild(enemy, 6);
+	
 }
 
 void GameScene::initSkill()
