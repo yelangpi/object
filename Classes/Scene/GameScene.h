@@ -5,6 +5,7 @@
 #include"Model/FlyingBox.h"
 #include"Model/Butterfly.h"
 #include"Model/RangeSkill.h"
+#include"Model/ImpactWave.h"
 #include<vector>
 class GameScene : public cocos2d::Layer
 {
@@ -17,6 +18,9 @@ public:
 	std::string _EnemyName;
 	Hero* _player;
 	Hero* _enemy;
+	cocos2d::Label* _skilltime1;
+	cocos2d::Label* _skilltime2;
+	cocos2d::Label* _skilltime3;
 	long long _nowtime = 0;
 	virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 	virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
@@ -36,6 +40,7 @@ public:
 	std::vector<Butterfly*>_Butterfly;
 	std::vector<Butterfly*>_ScheduleButterfly;
 	std::vector<RangeSkill*>_RangeSkill;
+	std::vector<ImpactWave*>_ImpactWave;
 	void playerAttack();
 	void playerAttack_1();
 	void playerAttack_2();
@@ -44,11 +49,18 @@ public:
 	std::vector<Model*>enemy_flag;
 	bool out_of_windows(cocos2d::Vec2 v);
 	void MoveMap(float delta);
-	cocos2d::Layer* FixedLayer;
 	float now_x = 0;
 	void doRangeSkill();
 	void doFlying();
 	void doButterfly();
+	void doImpactWave();
+	void initMap();
+	void initAnimation();
+	void initHero();
+	void initSkill();
+	void initHP();
+	void SkillTime();
+	void doHP();
 private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;

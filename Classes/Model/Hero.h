@@ -12,11 +12,15 @@ public:
 	void StopWalking(std::string s);
 	bool init(std::string name);
 	void initWithProperty(std::string name);
+	cocos2d::Sprite* _HPbox;
+	cocos2d::Sprite* _HPrectangle;
 	//记录所有反复的运动
 	std::map<std::string, cocos2d::RepeatForever*> reActions;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keys;
 	static Hero*CreateWithName(std::string name);
 	void Move(float delta);
+	void doHP();
+	bool initHP = false;
 	long long _attackTime = 0.0f;
 	long long _attackTime1 = 0.0f;
 	long long _attackTime2 = 0.0f;

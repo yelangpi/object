@@ -4,17 +4,12 @@
 #include"Model/Hero.h"
 using namespace CocosDenshion;
 USING_NS_CC;
-
 cocos2d::Scene * GameScene::createScene(std::string name1,std::string name2)
 {
-	//auto scene = Scene::create();
-	auto scene = Scene::createWithPhysics();
+	auto scene = Scene::create();
 	auto layer = GameScene::createWithName(name1,name2);
-	auto FixedLayer = Layer::create();
-	layer->setPhyWorld(scene->getPhysicsWorld());
-	layer->FixedLayer = FixedLayer;
+
 	scene->addChild(layer,0);
-	scene->addChild(FixedLayer,1);
 	return scene;
 }
 
@@ -25,158 +20,18 @@ bool GameScene::initWithName(std::string name1,std::string name2)
 		return false;
 	}
 	Vec2 v1 = Director::getInstance()->getWinSize();
-	_tileMap = TMXTiledMap::create("TileMap/TileMap.tmx");
-	Vec2 v2 = _tileMap->getContentSize();
-	_tileMap->setScale(v1.y / v2.y);
-	_tileMap->setAnchorPoint(Vec2::ZERO);
-	_tileMap->getMapSize();
-	_tileMap->setPosition(Vec2(0,0));
-	_tileMap->getLayer("background")->setVisible(true);
-	_tileMap->getLayer("red")->setVisible(true);
-	_tileMap->getLayer("blue")->setVisible(true);
-	//_tileMap->getLayer("collidable")->setVisible(false);
-	this->addChild(_tileMap, 0);
-
-	//
 	this->_PlayerName = name1;
 	this->_EnemyName = name2;
-	//
-		//DaJi
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Down")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left-Up")] = 2;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left-Down")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right-Up")] = 2;
-	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right-Down")] = 3;
-	//YaSe
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Down")] = 4;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left")] = 4;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right")] = 4;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left-Up")] = 4;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left-Down")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right-Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right-Down")] = 4;
-	//
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Up")] = 0;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Down")] = 0;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left")] = 4;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right")] = 5;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left-Up")] = 4;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left-Down")] = 4;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right-Up")] = 6;
-	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right-Down")] = 4;
-	//
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Up")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Down")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left-Up")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left-Down")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right-Up")] = 0;
-	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right-Down")] = 0;
-	//
-
-	//HouYi
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Down")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left-Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left-Down")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right-Up")] = 3;
-	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right-Down")] = 4;
-	//
-	LoadingAnimation("DaJi");
-	LoadingAnimation("YaSe");
-	LoadingAnimation("HouYi");
-	//
-	
-	auto player = Hero::CreateWithName(_PlayerName);
-	auto enemy = Hero::CreateWithName(_EnemyName);
-	_player = player;
-	_enemy = enemy;
-	_player->setPosition(v1.x / 2, v1.y / 4);
-	_enemy->setPosition(v1.x / 2, v1.y / 4 * 3);
-	
-	//auto player = Sprite::create("DaJi/Left/0000.PNG");
-	//_player = player;
-	//auto computer = Sprite::create("HouYi/touxiang.png");
-	//_computer = computer;
-	//player->setPosition(v1.x / 2, v1.y / 4);
-	//computer->setPosition(v1.x / 2, v1.y / 4 * 3);
-	////
-	//auto shuijing = Sprite::create("shuijing/shuijing.png");
-	//shuijing->setPosition(v1.x / 2, v1.y / 2);
-	//this->addChild(shuijing, 1);
-	//
-	//PhysicsBody*playerone = PhysicsBody::createCircle(player->getContentSize().width / 2, PHYSICSBODY_MATERIAL_DEFAULT);
-	//playerone->getShape(0)->setRestitution(1.0f);
-	//playerone->getShape(0)->setRestitution(1.0f);
-	//
-	//playerone->getShape(0)->setFriction(0.0f);
-	//
-	//playerone->getShape(0)->setDensity(1.0f);
-	////设置物体是否受重力系数影响
-	//playerone->setGravityEnable(false);
-
-	////设置物体的冲力
-	//Vec2 force = Vec2(500000.0f, 0);
-	//playerone->applyImpulse(force);
-	////把物体添加到精灵中
-	//player->setPhysicsBody(playerone);
-	////computer->setPhysicsBody(playerone);
-	////设置标志
-	//player->setTag(1);
-	////this->addChild(player);
-	//
-	////auto move1 = MoveTo::create(3, Point(0, 0));
-	////player->runAction(move1);
-	////player->runAction(Sequence::createWithTwoActions(move1, move1->reverse()));
-	///*auto jump = JumpBy::create(10, Vec2(0, 500), 100, 10);
-	//player->runAction(jump);*/
-	////
-	//PhysicsBody*playerone1 = PhysicsBody::createCircle(player->getContentSize().width / 2, PHYSICSBODY_MATERIAL_DEFAULT);
-	//playerone1->getShape(0)->setRestitution(1.0f);
-	//playerone1->getShape(0)->setRestitution(1.0f);
-	//auto x = playerone1->getMass();
-	//playerone1->getShape(0)->setFriction(0.0f);
-
-	//playerone1->getShape(0)->setDensity(1.0f);
-	////设置物体是否受重力系数影响
-	//playerone1->setGravityEnable(true);
-	////
-	////
-	//computer->setPhysicsBody(playerone1);
-	
-	_tileMap->addChild(player, 6);
-	_tileMap->addChild(enemy, 6);
-	//
-	/*auto background = Sprite::create("StartScene/background.jpg");
-	Vec2 v2 = background->getContentSize();
-	background->setScale(v1.y / v2.y);
-	background->setPosition(v1.x / 2, v1.y / 2);*/
-	//auto mapFrame = PhysicsBody::createEdgeBox(background->getContentSize());
-
-	//background->setPhysicsBody(mapFrame);
-	//this->addChild(background, 0);
-	//
+	initMap();
+	initAnimation();
+	initHero();
+	initSkill();
 	auto *dispatcher = Director::getInstance()->getEventDispatcher();
 	auto* keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
-	/*Animation* animation = AnimationCache::getInstance()->getAnimation("DaJi_Up");
-	animation->setLoops(10);
-	Animate *action = Animate::create(animation);
-	player->runAction(action);*/
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	scheduleUpdate();
-	//动画命名为 Explosion，加入到动画缓存中
-	//AnimationCache::getInstance()->addAnimation(animation, "Explosion");
-	//直接从动画缓存中取出 "Explosion" 动画
-	//Animation* animation = AnimationCache::getInstance()->getAnimation("Explosion");
 
 	return true;
 }
@@ -185,7 +40,6 @@ void GameScene::onEnterTransitionDidFinish()
 	auto audioengine = SimpleAudioEngine::getInstance();
 	audioengine->playBackgroundMusic("sound/File0001.wav", true);
 }
-
 void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)
 {
 	switch (keycode) {
@@ -344,7 +198,6 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::E
 		break;
 	}
 }
-
 void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event * event)
 {
 	switch (keycode) {
@@ -429,7 +282,6 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::
 		break;
 	}
 }
-
 GameScene * GameScene::createWithName(std::string name1,std::string name2)
 {
 	GameScene *pRet = new(std::nothrow) GameScene(); 
@@ -445,7 +297,6 @@ GameScene * GameScene::createWithName(std::string name1,std::string name2)
 			return nullptr; 
 	} 
 }
-
 void GameScene::update(float delta)
 {
 	_player->Move(delta);
@@ -453,7 +304,11 @@ void GameScene::update(float delta)
 	doFlying();
 	doButterfly();
 	doRangeSkill();
+	SkillTime();
+	doHP();
+	doImpactWave();
 	MoveMap(delta);
+	
 }
 void GameScene::LoadingYaSeAnimation()
 {
@@ -569,10 +424,94 @@ void GameScene::playerAttack()
 }
 void GameScene::playerAttack_1()
 {
+	//冷却时间   8 seconds
+	if (_player->getName() == "DaJi")
+	{
+		ImpactWave*f = ImpactWave::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/ImpactWave/%s/0000.PNG", _player->Now_Direction.c_str()));
+		long long now_time = GetCurrentTime();
+		if (now_time - _player->_attackTime1 >= 8000)
+		{
+			_player->_attackTime1 = now_time;
+			f->setFlag(_player->getFlag());
+			f->setEndtime(now_time + 1500);
+			f->setDirection(_player->Now_Direction);
+			cocos2d::Vec2 ballposition = _player->getPosition();
+			float x = 5.0f;
+			if (f->_direction == "Left")
+			{
+				ballposition.x -= x;
+			}
+			else if (f->_direction == "Right")
+			{
+				ballposition.x += x;
+			}
+			else if (f->_direction == "Up")
+			{
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Down")
+			{
+				ballposition.y -= x;
+			}
+			else if (f->_direction == "Left-Up")
+			{
+				ballposition.x -= x;
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Left-Down")
+			{
+				ballposition.x -= x;
+				ballposition.y -= x;
+			}
+			else if (f->_direction == "Right-Up")
+			{
+				ballposition.x += x;
+				ballposition.y += x;
+			}
+			else if (f->_direction == "Right-Down")
+			{
+				ballposition.x += x;
+				ballposition.y -= x;
+			}
+			if (!_enemy->isDie()) 
+			{
+				f->target.push_back(_enemy);
+				if (f->_direction == "Up" || f->_direction == "Down")
+				{
+					f->target_length.push_back(_enemy->getPosition().y - f->getPosition().y);
+				}
+				else
+				{
+					f->target_length.push_back(_enemy->getPosition().x - f->getPosition().x);
 
+				}
+			}
+			if (!enemy_flag.empty())
+			{
+				for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
+				{
+					f->target.push_back(*i);
+					if (f->_direction == "Up" || f->_direction == "Down")
+					{
+						f->target_length.push_back((*i)->getPosition().y - f->getPosition().y);
+					}
+					else
+					{
+						f->target_length.push_back((*i)->getPosition().x - f->getPosition().x);
+
+					}
+				}
+			}
+			f->setPosition(ballposition);
+			f->setVisible(true);
+			_tileMap->addChild(f, 10);
+			_ImpactWave.push_back(f);
+		}
+	}
 }
 void GameScene::playerAttack_2()
 {
+	//冷却时间 12 seconds
 	if (_player->getName() == "DaJi")
 	{
 		bool isDo = false;
@@ -595,7 +534,7 @@ void GameScene::playerAttack_2()
 				}
 			}
 		}
-		if (GetCurrentTime() - _player->_attackTime2 >= 15000 && GetEnemy)
+		if (GetCurrentTime() - _player->_attackTime2 >= 12000 && GetEnemy)
 		{
 			isDo = true;
 			f->setNowtime(GetCurrentTime() + 34);
@@ -635,7 +574,7 @@ void GameScene::playerAttack_2()
 				}
 			}
 		}
-		if (GetCurrentTime() - _player->_attackTime2 >= 15000 && GetEnemy)
+		if (GetCurrentTime() - _player->_attackTime2 >= 12000 && GetEnemy)
 		{
 			f->setEndtime(GetCurrentTime() + 300);
 			f->setOpacity(120);
@@ -664,6 +603,7 @@ void GameScene::playerAttack_2()
 }
 void GameScene::playerAttack_3()
 {
+	//冷却时间  18 seconds
 	if (_player->getName() == "DaJi")
 	{
 		bool isDo = false;
@@ -687,7 +627,7 @@ void GameScene::playerAttack_3()
 					}
 				}
 			}
-			if (GetCurrentTime() - _player->_attackTime3 >= 15000 && GetEnemy) {
+			if (GetCurrentTime() - _player->_attackTime3 >= 18000 && GetEnemy) {
 				isDo = true;
 				f->setNowtime(GetCurrentTime() + 34+(a-1)*200);
 				f->setOwner(_player);
@@ -706,8 +646,8 @@ void GameScene::playerAttack_3()
 	else if (_player->getName() == "HouYi")
 	{
 		Butterfly* f = Butterfly::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack2/%s/0000.PNG", _player->Now_Direction.c_str()));
-		if (GetCurrentTime() - _player->_attackTime >= 100) {
-			_player->_attackTime = GetCurrentTime();
+		if (GetCurrentTime() - _player->_attackTime3 >= 18000) {
+			_player->_attackTime3 = GetCurrentTime();
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setDirection(_player->Now_Direction);
 			_ScheduleButterfly.push_back(f);
@@ -815,8 +755,9 @@ void GameScene::doFlying()
 				f3.x /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
 				f3.y /= sqrt(f3.x*f3.x + f3.y*f3.y) / 10;
 				(*i)->setPosition(f3 + f1);
-				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 20 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 20) {
-
+				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 20 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 20) 
+				{
+					Target->setCurrentHp(Target->getCurrentHp() - 100);
 					(*i)->setVisible(false);
 					(*i)->removeFromParent();
 					i = _flying.erase(i);
@@ -825,7 +766,11 @@ void GameScene::doFlying()
 					++i;
 			}
 			else
+			{
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
 				i = _flying.erase(i);
+			}
 		}
 
 	}
@@ -915,5 +860,272 @@ void GameScene::doButterfly()
 		}
 
 	}
+}
+
+void GameScene::doImpactWave()
+{
+	if (!_ImpactWave.empty()) {
+		for (auto i = _ImpactWave.begin(); i != _ImpactWave.end();) 
+		{
+			long long now_time = GetCurrentTime();
+			auto k = (*i)->target_length.begin();
+			auto j = (*i)->target.begin();
+			if ((*i)->_direction == "Up" || (*i)->_direction == "Down")
+			{
+				if (!(*i)->target.empty()) 
+				{
+					for (; j != (*i)->target.end(); j++, k++)
+					{
+						int xx = *k;
+						int yy = (*j)->getPosition().y-(*i)->getPosition().y;
+						if (xx*yy < 0&&(*j)->getPosition().x<(*i)->getPosition().x+(*i)->getContentSize().width/2&& (*j)->getPosition().x > (*i)->getPosition().x - (*i)->getContentSize().width / 2)
+						{
+							(*j)->setCurrentHp((*j)->getCurrentHp() - 100);
+						}
+						*k = yy;
+					}
+				}
+			}
+			else
+			{
+				if (!(*i)->target.empty())
+				{
+					for (; j != (*i)->target.end(); j++, k++)
+					{
+						int xx = *k;
+						int yy = (*j)->getPosition().x - (*i)->getPosition().x;
+						if (xx*yy < 0 && (*j)->getPosition().y<(*i)->getPosition().y + (*i)->getContentSize().height / 2 && (*j)->getPosition().y >(*i)->getPosition().y - (*i)->getContentSize().height / 2)
+						{
+							(*j)->setCurrentHp((*j)->getCurrentHp() - 100);
+						}
+						*k = yy;
+					}
+				}
+			}
+			if(now_time>(*i)->getEndtime())
+			{
+				(*i)->setVisible(false);
+				(*i)->removeFromParent();
+				i = _ImpactWave.erase(i);
+			}
+			else
+			{
+				auto dir = (*i)->_direction;
+				auto pos = (*i)->getPosition();
+				if (dir == "Left")
+				{
+					pos.x -= 7;
+				}
+				else if (dir == "Right")
+				{
+					pos.x += 7;
+				}
+				else if (dir == "Up")
+				{
+					pos.y += 7;
+				}
+				else if (dir == "Down")
+				{
+					pos.y -= 7;
+				}
+				else if (dir == "Left-Up")
+				{
+					pos.y += 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Up")
+				{
+					pos.y += 4.95;
+					pos.x += 4.95;
+				}
+				else if (dir == "Left-Down")
+				{
+					pos.y -= 4.95;
+					pos.x -= 4.95;
+				}
+				else if (dir == "Right-Down")
+				{
+					pos.y -= 4.95;
+					pos.x += 4.95;
+				}
+				(*i)->setPosition(pos);
+				i++;
+			}
+		}
+		
+	}
+}
+
+void GameScene::initMap()
+{
+	Vec2 v1 = Director::getInstance()->getWinSize();
+	_tileMap = TMXTiledMap::create("TileMap/TileMap.tmx");
+	Vec2 v2 = _tileMap->getContentSize();
+	_tileMap->setScale(v1.y / v2.y);
+	_tileMap->setAnchorPoint(Vec2::ZERO);
+	_tileMap->getMapSize();
+	_tileMap->setPosition(Vec2(0, 0));
+	_tileMap->getLayer("background")->setVisible(true);
+	_tileMap->getLayer("red")->setVisible(true);
+	_tileMap->getLayer("blue")->setVisible(true);
+	this->addChild(_tileMap, 0);
+}
+
+void GameScene::initAnimation()
+{
+	//DaJi
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Down")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left-Up")] = 2;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Left-Down")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right-Up")] = 2;
+	Dirction_Animation_Walk_Number[std::make_pair("DaJi", "Right-Down")] = 3;
+	//YaSe
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Down")] = 4;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left")] = 4;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right")] = 4;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left-Up")] = 4;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Left-Down")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right-Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("YaSe", "Right-Down")] = 4;
+	//
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Up")] = 5;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Down")] = 4;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left")] = 4;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right")] = 5;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left-Up")] = 4;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Left-Down")] = 4;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right-Up")] = 6;
+	Dirction_Animation_Attack_Number[std::make_pair("YaSe", "Right-Down")] = 4;
+	//
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Up")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Down")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left-Up")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Left-Down")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right-Up")] = 0;
+	Dirction_Animation_Skill1_Number[std::make_pair("YaSe", "Right-Down")] = 0;
+	//
+
+	//HouYi
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Down")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left-Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Left-Down")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right-Up")] = 3;
+	Dirction_Animation_Walk_Number[std::make_pair("HouYi", "Right-Down")] = 4;
+	//
+	LoadingAnimation("DaJi");
+	LoadingAnimation("YaSe");
+	LoadingAnimation("HouYi");
+	//
+
+}
+
+void GameScene::initHero()
+{
+	Vec2 v1 = Director::getInstance()->getWinSize();
+	auto player = Hero::CreateWithName(_PlayerName);
+	auto enemy = Hero::CreateWithName(_EnemyName);
+	_player = player;
+	_enemy = enemy;
+	_player->setPosition(v1.x / 2, v1.y / 4);
+	_enemy->setPosition(v1.x / 2, v1.y / 4 * 3);
+	_player->setFlag(Flag::BLUE);
+	_enemy->setFlag(Flag::RED);
+	_tileMap->addChild(player, 6);
+	_tileMap->addChild(enemy, 6);
+}
+
+void GameScene::initSkill()
+{
+	auto skill1 = Sprite::create(cocos2d::StringUtils::format("%s/jineng1.png", _player->getName().c_str()));
+	auto skill2 = Sprite::create(cocos2d::StringUtils::format("%s/jineng2.png", _player->getName().c_str()));
+	auto skill3 = Sprite::create(cocos2d::StringUtils::format("%s/jineng3.png", _player->getName().c_str()));
+	Vec2 w = Director::getInstance()->getWinSize();
+	Vec2 v = skill1->getContentSize();
+	Vec2 v1 = Vec2(w.x - 7*v.x / 2, v.y / 2);
+	Vec2 v2 = Vec2(w.x - 4*v.x / 2, v.y / 2);
+	Vec2 v3 = Vec2(w.x - v.x / 2, v.y / 2);
+	skill1->setPosition(v1);
+	skill2->setPosition(v2);
+	skill3->setPosition(v3);
+	this->addChild(skill1, 1);
+	this->addChild(skill2, 1);
+	this->addChild(skill3, 1);
+	Label* skilltime1 = Label::createWithTTF("1", "fonts/Marker Felt.ttf", 30);
+	Label* skilltime2 = Label::createWithTTF("1", "fonts/Marker Felt.ttf", 30);
+	Label* skilltime3 = Label::createWithTTF("1", "fonts/Marker Felt.ttf", 30);
+	skilltime1->setColor(cocos2d::Color3B(0, 0, 0));
+	skilltime2->setColor(cocos2d::Color3B(0, 0, 0));
+	skilltime3->setColor(cocos2d::Color3B(0, 0, 0));
+	skilltime1->setPosition(v1);
+	skilltime2->setPosition(v2);
+	skilltime3->setPosition(v3);
+	skilltime1->setVisible(false);
+	skilltime2->setVisible(false);
+	skilltime3->setVisible(false);
+	this->addChild(skilltime1, 2);
+	this->addChild(skilltime2, 2);
+	this->addChild(skilltime3, 2);
+	_skilltime1 = skilltime1;
+	_skilltime2 = skilltime2;
+	_skilltime3 = skilltime3;
+}
+
+void GameScene::initHP()
+{
+	cocos2d::Sprite*HPbox = cocos2d::Sprite::create("xuetiao/xuetiao2.png");
+	cocos2d::Sprite*HPrectangle= cocos2d::Sprite::create("xuetiao/xuetiao1.png");
+	
+}
+void GameScene::SkillTime()
+{
+	long long now_time = GetCurrentTime();
+	long long t1 = now_time - _player->_attackTime1;
+	long long t2 = now_time - _player->_attackTime2;
+	long long t3 = now_time - _player->_attackTime3;
+	if (t1 < 8000)
+	{
+		_skilltime1->setVisible(true);
+		int cc = -(t1 - 8000) / 1000 + 1;
+		_skilltime1->setString(std::to_string(cc));
+	}
+	else
+	{
+		_skilltime1->setVisible(false);
+	}
+	if (t2 < 12000)
+	{
+		_skilltime2->setVisible(true);
+		int cc = -(t2 - 12000) / 1000 + 1;
+		_skilltime2->setString(std::to_string(cc));
+	}
+	else
+	{
+		_skilltime2->setVisible(false);
+	}
+	if (t3 < 18000)
+	{
+		_skilltime3->setVisible(true);
+		int cc = -(t3 - 18000) / 1000 + 1;
+		_skilltime3->setString(std::to_string(cc));
+	}
+	else
+	{
+		_skilltime3->setVisible(false);
+	}
+}
+
+void GameScene::doHP()
+{
+	_player->doHP();
+	_enemy->doHP();
 }
 
