@@ -18,15 +18,21 @@ bool PrepareScene1::init()
 	{
 		return false;
 	}
+	auto background = Sprite::create("PrepareScene1/background.png");
+	Vec2 v1 = Director::getInstance()->getWinSize();
+	Vec2 v4 = background->getContentSize();
+	background->setScale(v1.x / v4.x);
+	background->setPosition(v1.x / 2, v1.y / 2);
+	this->addChild(background, 0);
+	//
 	auto audioengine = SimpleAudioEngine::getInstance();
 	audioengine->preloadEffect("DaJi/chuchangmusic.mp3");
 	audioengine->preloadEffect("HouYi/chuchangmusic.mp3");
 	audioengine->preloadEffect("YaSe/chuchangmusic.mp3");
-	Vec2 v1 = Director::getInstance()->getWinSize();
 	//
 	auto BackItem = MenuItemImage::create(
-		"button/button1.png",
-		"button/button2.png",
+		"button/button9.png",
+		"button/button10.png",
 		CC_CALLBACK_1(PrepareScene1::BackCallback, this));
 	Vec2 v2 = BackItem->getContentSize();
 	BackItem->setPosition(v2.x / 2 * 0.5, v1.y - v2.y / 2 * 0.5);
@@ -37,37 +43,43 @@ bool PrepareScene1::init()
 		"DaJi/touxiang.png",
 		"DaJi/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::playerCallback1, this));
-	PlayerItem1->setPosition(v1.x / 4, 3*v1.y / 4);
+	PlayerItem1->setScale(2.0);
+	PlayerItem1->setPosition(v1.x / 3, 3*v1.y / 4);
 	_playerbutton1 = PlayerItem1;
 	//
 	auto PlayerItem2 = MenuItemImage::create(
 		"HouYi/touxiang.png",
 		"HouYi/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::playerCallback2, this));
-	PlayerItem2->setPosition(v1.x / 4, 2 * v1.y / 4);
+	PlayerItem2->setPosition(v1.x / 3, 2 * v1.y / 4);
+	PlayerItem2->setScale(2.0);
 	_playerbutton2 = PlayerItem2;
 	//
 	auto PlayerItem3 = MenuItemImage::create(
 		"YaSe/touxiang.png",
 		"YaSe/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::playerCallback3, this));
-	PlayerItem3->setPosition(v1.x / 4,  v1.y / 4);
+	PlayerItem3->setPosition(v1.x / 3,  v1.y / 4);
+	PlayerItem3->setScale(2.0);
 	_playerbutton3 = PlayerItem3;
 	//
 	auto PlayerSelected1 = Sprite::create("DaJi/touxiang-xuanzhong.png");
-	PlayerSelected1->setPosition(v1.x / 4, 3*v1.y / 4);
+	PlayerSelected1->setScale(2.0);
+	PlayerSelected1->setPosition(v1.x / 3, 3*v1.y / 4);
 	PlayerSelected1->setVisible(false);
 	this->addChild(PlayerSelected1, 1);
 	_playerselected1 = PlayerSelected1;
 	//
 	auto PlayerSelected2 = Sprite::create("HouYi/touxiang-xuanzhong.png");
-	PlayerSelected2->setPosition(v1.x / 4, 2 * v1.y / 4);
+	PlayerSelected2->setScale(2.0);
+	PlayerSelected2->setPosition(v1.x / 3, 2 * v1.y / 4);
 	PlayerSelected2->setVisible(false);
 	this->addChild(PlayerSelected2, 1);
 	_playerselected2 = PlayerSelected2;
 	//
 	auto PlayerSelected3 = Sprite::create("YaSe/touxiang-xuanzhong.png");
-	PlayerSelected3->setPosition(v1.x / 4, v1.y / 4);
+	PlayerSelected3->setScale(2.0);
+	PlayerSelected3->setPosition(v1.x / 3, v1.y / 4);
 	PlayerSelected3->setVisible(false);
 	this->addChild(PlayerSelected3, 1);
 	_playerselected3 = PlayerSelected3;
@@ -76,37 +88,43 @@ bool PrepareScene1::init()
 		"DaJi/touxiang.png",
 		"DaJi/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::computerCallback1, this));
-	ComputerItem1->setPosition(3 * v1.x / 4, 3 * v1.y / 4);
+	ComputerItem1->setPosition(2 * v1.x / 3, 3 * v1.y / 4);
+	ComputerItem1->setScale(2.0);
 	_computerbutton1 = ComputerItem1;
 	//
 	auto ComputerItem2 = MenuItemImage::create(
 		"HouYi/touxiang.png",
 		"HouYi/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::computerCallback2, this));
-	ComputerItem2->setPosition(3 * v1.x / 4, 2 * v1.y / 4);
+	ComputerItem2->setPosition(2 * v1.x / 3, 2 * v1.y / 4);
+	ComputerItem2->setScale(2.0);
 	_computerbutton2 = ComputerItem2;
 	//
 	auto ComputerItem3 = MenuItemImage::create(
 		"YaSe/touxiang.png",
 		"YaSe/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::computerCallback3, this));
-	ComputerItem3->setPosition(3 * v1.x / 4, v1.y / 4);
+	ComputerItem3->setPosition(2 * v1.x / 3, v1.y / 4);
+	ComputerItem3->setScale(2.0);
 	_computerbutton3 = ComputerItem3;
 	//
 	auto ComputerSelected1 = Sprite::create("DaJi/touxiang-xuanzhong.png");
-	ComputerSelected1->setPosition(3 * v1.x / 4, 3 * v1.y / 4);
+	ComputerSelected1->setScale(2.0);
+	ComputerSelected1->setPosition(2 * v1.x / 3, 3 * v1.y / 4);
 	ComputerSelected1->setVisible(false);
 	this->addChild(ComputerSelected1, 1);
 	_computerselected1 = ComputerSelected1;
 	//
 	auto ComputerSelected2 = Sprite::create("HouYi/touxiang-xuanzhong.png");
-	ComputerSelected2->setPosition(3 * v1.x / 4, 2 * v1.y / 4);
+	ComputerSelected2->setScale(2.0);
+	ComputerSelected2->setPosition(2 * v1.x / 3, 2 * v1.y / 4);
 	ComputerSelected2->setVisible(false);
 	this->addChild(ComputerSelected2, 1);
 	_computerselected2 = ComputerSelected2;
 	//
 	auto ComputerSelected3 = Sprite::create("YaSe/touxiang-xuanzhong.png");
-	ComputerSelected3->setPosition(3*v1.x / 4, v1.y / 4);
+	ComputerSelected3->setScale(2.0);
+	ComputerSelected3->setPosition(2*v1.x / 3, v1.y / 4);
 	ComputerSelected3->setVisible(false);
 	this->addChild(ComputerSelected3, 1);
 	_computerselected3 = ComputerSelected3;
@@ -115,7 +133,7 @@ bool PrepareScene1::init()
 		"button/button1.png",
 		"button/button2.png",
 		CC_CALLBACK_1(PrepareScene1::StartGameCallback, this));
-	StartItem->setPosition(v1.x / 2, v1.y / 5); 
+	StartItem->setPosition(v1.x / 2, v1.y / 8); 
 	StartItem->getSelectedImage()->setScale(0.7);
 	StartItem->setEnabled(false);
 	_startbutton = StartItem;

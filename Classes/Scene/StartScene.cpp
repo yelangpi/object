@@ -66,7 +66,7 @@ void StartScene::CloseCallback(Ref * psender)
 
 void StartScene::SettingCallback(Ref * psender)
 {
-
+	//Director::getInstance()->pushScene(TransitionFade::create(3, SettingScene::createScene()));
 }
 
 void StartScene::PrepareCallback(Ref * psender)
@@ -76,4 +76,5 @@ void StartScene::PrepareCallback(Ref * psender)
 
 void StartScene::PrepareCallback2(Ref * psender)
 {
+	Director::getInstance()->pushScene(TransitionFade::create(3, PrepareScene2::createScene()));
 }
