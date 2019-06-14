@@ -1,22 +1,10 @@
-//
-// chat_message.hpp
-// ~~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-#define _CRT_SECURE_NO_WARNINGS
-#ifndef CHAT_MESSAGE_HPP
-#define CHAT_MESSAGE_HPP
+#ifndef CHAT_MESSAGE_H
+#define CHAT_MESSAGE_H
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-/*
-	所有的数据都按照这种格式上传，
-	长度限制是512个字节
-*/
+
 class chat_message
 {
 public:
@@ -32,7 +20,7 @@ public:
 	{
 		return data_;
 	}
-	//获取存取的所有数据
+
 	char* data()
 	{
 		return data_;
@@ -42,7 +30,7 @@ public:
 	{
 		return header_length + body_length_;
 	}
-	//获取所存的真正的内容
+
 	const char* body() const
 	{
 		return data_ + header_length;
@@ -78,7 +66,6 @@ public:
 		}
 		return true;
 	}
-
 	void encode_header()
 	{
 		using namespace std; // For sprintf and memcpy.
@@ -86,10 +73,8 @@ public:
 		sprintf(header, "%4d", static_cast<int>(body_length_));
 		memcpy(data_, header, header_length);
 	}
-
 private:
 	char data_[header_length + max_body_length];
 	size_t body_length_;
 };
-
-#endif // CHAT_MESSAGE_HPP
+#endif
