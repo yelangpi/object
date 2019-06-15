@@ -7,6 +7,7 @@
 #include"Model/RangeSkill.h"
 #include"Model/ImpactWave.h"
 #include"Model/Shield.h"
+#include"Model/Tower.h"
 #include<vector>
 class GameScene : public cocos2d::Layer
 {
@@ -19,10 +20,16 @@ public:
 	std::string _EnemyName;
 	Hero* _player;
 	Hero* _enemy;
+	Tower*_bluecrystal;
+	Tower*_redcrystal;
+	Tower*_bluetower;
+	Tower*_redtower;
+	std::vector<Tower*>_tower;
 	cocos2d::Label* _skilltime1;
 	cocos2d::Label* _skilltime2;
 	cocos2d::Label* _skilltime3;
 	long long _nowtime = 0;
+	long long _soldiertime = 0;
 	virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 	virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 	CREATE_FUNC(GameScene);
@@ -43,6 +50,7 @@ public:
 	std::vector<RangeSkill*>_RangeSkill;
 	std::vector<ImpactWave*>_ImpactWave;
 	std::vector<Shield*>_Shield;
+	std::vector<Soldier*>_soldier;
 	void playerAttack();
 	void playerAttack_1();
 	void playerAttack_2();
@@ -51,6 +59,8 @@ public:
 	void enemyAttack_1();
 	void enemyAttack_2();
 	void enemyAttack_3();
+	void towerAttack();
+	void soldierAttack(Soldier* soldier);
 	std::vector<Model*>player_flag;
 	std::vector<Model*>enemy_flag;
 	bool out_of_windows(cocos2d::Vec2 v);
@@ -66,8 +76,14 @@ public:
 	void initHero();
 	void initSkill();
 	void initHP();
+	void initTower();
+	void initSoldier();
 	void SkillTime();
 	void doHP();
+	void soldierAI();
+	void enemyAI();
+	void enemy_onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, Hero * _player);
+	void enemy_onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, Hero * _player);
 private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;
