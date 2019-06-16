@@ -41,6 +41,8 @@ class Model :public cocos2d::Sprite {
 	CC_SYNTHESIZE(Buff, _buff, Buff);
 	//移速
 	CC_SYNTHESIZE(float, _movingRate, MovingRate);
+	//无意识时间
+	CC_SYNTHESIZE(long long, _endTime, EndTime);
 	std::string _name;
 public:
 	Model();
@@ -53,6 +55,11 @@ public:
 	virtual void attacked(float delta);
 	std::string Now_Direction = "Left";
 	void setDirction_image();
+	void doHP();
+	cocos2d::Sprite*_HPbox;
+	cocos2d::Sprite*_HPrectangle;
+	cocos2d::Label*_Level;
+	bool initHP = false;
 protected:
 	std::map<std::string,std::string> dirction_image;
 };

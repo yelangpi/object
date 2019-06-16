@@ -36,15 +36,22 @@ bool PrepareScene1::init()
 		CC_CALLBACK_1(PrepareScene1::BackCallback, this));
 	Vec2 v2 = BackItem->getContentSize();
 	BackItem->setPosition(v2.x / 2 * 0.5, v1.y - v2.y / 2 * 0.5);
-	BackItem->getSelectedImage()->setScale(0.7);
 	BackItem->setScale(0.5);
+	//
+	auto PlayerWord = Sprite::create("PrepareScene1/player.png");
+	PlayerWord->setPosition(v1.x / 3, 7 * v1.y / 8);
+	this->addChild(PlayerWord, 1);
+	auto ComputerWord = Sprite::create("PrepareScene1/computer.png");
+	ComputerWord->setScale(1.5);
+	ComputerWord->setPosition(2 * v1.x / 3, 7 * v1.y / 8);
+	this->addChild(ComputerWord, 1);
 	//
 	auto PlayerItem1 = MenuItemImage::create(
 		"DaJi/touxiang.png",
 		"DaJi/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::playerCallback1, this));
 	PlayerItem1->setScale(2.0);
-	PlayerItem1->setPosition(v1.x / 3, 3*v1.y / 4);
+	PlayerItem1->setPosition(v1.x / 3, 3 * v1.y / 4);
 	_playerbutton1 = PlayerItem1;
 	//
 	auto PlayerItem2 = MenuItemImage::create(
@@ -59,13 +66,13 @@ bool PrepareScene1::init()
 		"YaSe/touxiang.png",
 		"YaSe/touxiang.png",
 		CC_CALLBACK_1(PrepareScene1::playerCallback3, this));
-	PlayerItem3->setPosition(v1.x / 3,  v1.y / 4);
+	PlayerItem3->setPosition(v1.x / 3, v1.y / 4);
 	PlayerItem3->setScale(2.0);
 	_playerbutton3 = PlayerItem3;
 	//
 	auto PlayerSelected1 = Sprite::create("DaJi/touxiang-xuanzhong.png");
 	PlayerSelected1->setScale(2.0);
-	PlayerSelected1->setPosition(v1.x / 3, 3*v1.y / 4);
+	PlayerSelected1->setPosition(v1.x / 3, 3 * v1.y / 4);
 	PlayerSelected1->setVisible(false);
 	this->addChild(PlayerSelected1, 1);
 	_playerselected1 = PlayerSelected1;
@@ -124,7 +131,7 @@ bool PrepareScene1::init()
 	//
 	auto ComputerSelected3 = Sprite::create("YaSe/touxiang-xuanzhong.png");
 	ComputerSelected3->setScale(2.0);
-	ComputerSelected3->setPosition(2*v1.x / 3, v1.y / 4);
+	ComputerSelected3->setPosition(2 * v1.x / 3, v1.y / 4);
 	ComputerSelected3->setVisible(false);
 	this->addChild(ComputerSelected3, 1);
 	_computerselected3 = ComputerSelected3;
@@ -133,12 +140,11 @@ bool PrepareScene1::init()
 		"button/button1.png",
 		"button/button2.png",
 		CC_CALLBACK_1(PrepareScene1::StartGameCallback, this));
-	StartItem->setPosition(v1.x / 2, v1.y / 8); 
-	StartItem->getSelectedImage()->setScale(0.7);
+	StartItem->setPosition(v1.x / 2, v1.y / 8);
 	StartItem->setEnabled(false);
 	_startbutton = StartItem;
 	//
-	auto menu = Menu::create(BackItem,PlayerItem1, PlayerItem2, PlayerItem3,ComputerItem1, ComputerItem2, ComputerItem3, StartItem, NULL);
+	auto menu = Menu::create(BackItem, PlayerItem1, PlayerItem2, PlayerItem3, ComputerItem1, ComputerItem2, ComputerItem3, StartItem, NULL);
 	menu->setPosition(0, 0);
 	this->addChild(menu, 1);
 	//
@@ -317,6 +323,6 @@ void PrepareScene1::computerCallback3(Ref * Psender)
 }
 void PrepareScene1::StartGameCallback(Ref * Psender)
 {
-	std::string name[3]={"DaJi","HouYi","YaSe"};
-	Director::getInstance()->replaceScene(TransitionFade::create(3, GameScene::createScene(name[_playernumber-1], name[_computernumber-1])));
+	std::string name[3] = { "DaJi","HouYi","YaSe" };
+	Director::getInstance()->replaceScene(TransitionFade::create(3, GameScene::createScene(name[_playernumber - 1], name[_computernumber - 1])));
 }

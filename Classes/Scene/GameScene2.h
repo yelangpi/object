@@ -2,6 +2,7 @@
 #ifndef __SCENE_GAMESCENE2_H__
 #define __SCENE_GAMESCENE2_H__
 #include "cocos2d.h"
+#include"EndScene.h"
 #include"Model/Hero.h"
 #include"Model/FlyingBox.h"
 #include"Model/Butterfly.h"
@@ -39,6 +40,9 @@ public:
 	cocos2d::Label* _skilltime1;
 	cocos2d::Label* _skilltime2;
 	cocos2d::Label* _skilltime3;
+	cocos2d::Label*TT;
+	cocos2d::Label*ZZ;
+	cocos2d::Label*MM;
 	long long _nowtime = 0;
 	long long _soldiertime = 9999999999999999;
 	virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);

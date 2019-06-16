@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="180" height="35" tilewidth="50" tileheight="50">
+ <tileset firstgid="1" name="Images" tilewidth="800" tileheight="700">
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="750" height="550" source="../MAP/img_0476.png"/>
+  </tile>
+  <tile id="1">
+   <image width="800" height="300" source="../MAP/img_0474.png"/>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="750" height="550" source="../MAP/img_0477.png"/>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="450" height="600" source="../MAP/IMG_0460.PNG"/>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="450" height="600" source="../MAP/IMG_0461.PNG"/>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="700" height="700" source="../MAP/IMG_0462.PNG"/>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+   <image width="700" height="700" source="../MAP/IMG_0463.PNG"/>
+  </tile>
+  <tile id="7">
+   <image width="50" height="50" source="0009.PNG"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="9" name="0000" tilewidth="50" tileheight="50">
+  <image source="0000.PNG" width="550" height="320"/>
+ </tileset>
+ <tileset firstgid="75" name="0001" tilewidth="50" tileheight="50">
+  <image source="0001.png" width="300" height="150"/>
+ </tileset>
+ <tileset firstgid="93" name="0002" tilewidth="50" tileheight="50">
+  <image source="0002.png" width="550" height="750"/>
+ </tileset>
+ <tileset firstgid="258" name="0003" tilewidth="50" tileheight="50">
+  <image source="0003.png" width="550" height="750"/>
+ </tileset>
+ <tileset firstgid="423" name="0008" tilewidth="50" tileheight="50">
+  <image source="0008.png" width="800" height="300"/>
+ </tileset>
+ <tileset firstgid="519" name="0009" tilewidth="50" tileheight="50">
+  <image source="0009.PNG" width="50" height="50"/>
+  <tile id="0">
+   <properties>
+    <property name="collidable" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJztm0duxDAUxbxN77333nudSU/m/gcKvQ1gQIgEW5OQAHe8wPuWi0JCGMFRHMMe7MU+7McBHMQhHK6hFYllHhdwEcdxAidxCqdxBmdxroZWJJYt3MYdXMJlXMFVXMN13MDNGlqRWE7xDM9xF/dwHw/wEI/wGE9qaKWaC7zEK7zGG7zFO7zHB3zElq1tF7RtfMJnfMFXfMN3/MBP/MKOrW0XtE1vdVvblG3TW93WNmXb9Fa3tU3ZNr3VbW1TtjluVFtb7xu2tnluVFtb7xu2tnluVFvb37a+GUhLzFaXalLfNySMmK0u1aS+b0gYMVtdqim3X8r7hoQRs9WlmnL7pbxvSBgxW12qKbdfyvuGhBGz1aWacvv5fsP2r7StwDbHb/C2tj/bTmDbLvL7Bm9r6/sNW9s8v8Hb2vp+w9Y23z1ra+v/Kbb/vW0X+W1UW1vvG7a2EkpOu14klpx2vUgsOe16kVhy2vVSzTdPNLlW
+  </data>
+ </layer>
+ <layer name="background2" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJzt1kluwzAQBED9z4kTO3vs/78jcxQIbVxEyEgV0JchRQitgzgMAAAAAAAAAAAAADAMp8hT5DlyjrxEXgvm47W5PTnnlbxTy7PSeY1WHW/pPl3r3VPPXqdcItfIW+Q98hH5LJiP1+b25JxX8k4tz0rnNVp1vKX7dK13Tz17nfIV+Y78RH4jt8i9YD5em9uTc17JO7U8K53XaNXxlu7Ttd499ex1yt7/k5x5Oqt5Nnfv2r+4xpE6Xrqf7PENH/W+0WKezmqezd279i+ucaSOl+4ne3zDR71vtJins5pnc/eu/YtrHKnjpfvJHt+w930DAAAAAAAAAAAA/pM/wJcbrg==
+  </data>
+ </layer>
+ <layer name="background3" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJzt0sVSA1EABdE3A+H//wJ3C+7ukgR3dwuSYM2SHbtMUX2qen8XNwRJkiRJkiRJkiRJkiRJkiRJf1EZhVBF1VRDtVRH9dRAjdREzdRCrdRG7dQRlXq99Fsnn0xTF3VTD/VSH/XTAA3SEA3TCI3SGI37ZyXMBJ+cpCmaphmapTmapwVapCVaphVapQxl/bMSJscn12idNmiTtmibdmiX9mifDuiQjuiYTvyzEuaUT57ROV3QJV3RNd3QLd3RPT3QIz1Rnp79sxLmhU++0hsVqEjv9EGf9PXz2TiEiGIqo3JKUUVc6vWSJEmSJEmSJEmSJEmSJOm/+gZBWknY
+  </data>
+ </layer>
+ <layer name="red" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJzt0skzFnAAh/H3PYROohxQ0UhkLRWVlLKEsq+RJUuiRPsylsRM2XKQ7VTxj/b8DS7m987zzHzu38M3EjEzMzMzMzMzMzMzMzOzWOlENBKJQzwScDJ63IvMjlYi3z2FJCTjNM4gxU9bYKXy2TSk4yzO4TwykIkLftoCKYuvXkQ2LiEHubiMPOSjAIV+2gKoiJ8W4wquogTXcB03UIoy3PTPFkC3+OltlOMOKnAX91CJ+3iAKv9sAVTNT2tQi4eoQz0a8AiP0Ygm/2wB1MxPW9CKNrSjA53oQjd68MQ/WwD18tM+PEU/BjCIITzDMEYw6p8tgMb46XOM4wUmMImXeIUpvMa0f7YAmuGnb/AW7/AeH/ARn/AZX/DVP1sgzfLVOcxjAd+wiO9YwrJftoD6wV9/YgWrWMM6NvALm/7ZAmuLz/7GNnawiz3s+2ULtD989y/+4QCHftnMzMzMzMzMzMzMzMzMzGKg/zbcLdA=
+  </data>
+ </layer>
+ <layer name="blue" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJztzkk3FmAAQGE/tdKqpBZR5DSZDqkQKjQoUcZMlUJlaKBMzQOOVGQh0Upy3J/g/SzehXvPefY3KcnMzMzMzMzMzMzMzMy22i7sxh4kY2/UG7PE24f9SMEBpOIgDsWcMkugw0hDOo7gKDKQiWPIirdmFtRxnMBJnMJpZCMHuchDfqw5s8AKUIgzKMJZnMN5FKMEpbgQa9AsoDKUowIXcQmXUYkqVOMKrsYaNAvoGq6jBjdwE7W4hTrU4zbuRPozC6kBjWhCM1rQirtoQzs60Blr0CygLtzDfTxANx7iEXrQiz48jjVoFtATPEU/BjCIITzDc7zASwxH+jMLaQSv8BqjGMM4JjCJN3iLd7EGzQJ6jw/4iE/4jC/4iilMYybanVlYs/iGOXzHD/zEPBbwC4vR7swSawm/sYw/WMEq/sacMttGa/iHdfzHRtwdMzMzMzMzMzMzMzMzMzMzsx3RJtZ3X90=
+  </data>
+ </layer>
+ <layer name="collidable" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJzt2DEOg1AQA9EoDfe/cdrU0eZ7MW8kt1hehobr/XpdIvKobCJ9C7l/NpG+hdw/m0jfYnuABviMJviMJviMJviMJviMJviMJk747B/iWU7edtu7fZLPT/l++Py/5393pDfzmc+THenNfObzZEd6M5/5PNmR3sxnPk92pDfzmc+THenNfObzZEd6M5/5PNmR3sxnPk92pDfzmc+THenNfObzZMeWzZhj27vlM5rgDprgM5rgM5rgM5rgM5rgM5r49V/aE7OJ9C3k/tlE+hZy/2wifQsROZMPRxhBUw==
+  </data>
+ </layer>
+ <objectgroup name="things">
+  <object name="bluecrystal" x="1197.46" y="546.403" width="697.236" height="700.377"/>
+  <object name="bluetower" x="2898.87" y="603.015" width="398.869" height="546.482"/>
+  <object name="redtower" x="5800.88" y="552.764" width="445.98" height="596.734"/>
+  <object name="redcrystal" x="7151.38" y="546.482" width="690.955" height="653.266"/>
+ </objectgroup>
+ <layer name="justatest" width="180" height="35">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4MmJwAAE=
+  </data>
+ </layer>
+</map>

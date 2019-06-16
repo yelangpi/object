@@ -241,8 +241,9 @@ void GameScene2::update(float delta)
 	towerAttack();
 	MoveMap(delta);
 	doHP();
-	if (_player->isDie() && now_time > _player->revive_time)
+if (_player->isDie() && now_time > _player->revive_time)
 	{
+		_enemy->setExp(_enemy->getExp() + 100);
 		_player->setPosition(_player->born_position);
 		_player->setVisible(true);
 		_player->setCurrentHp(_player->getHp());
@@ -250,6 +251,7 @@ void GameScene2::update(float delta)
 	}
 	if (_enemy->isDie() && now_time > _enemy->revive_time)
 	{
+		_player->setExp(_enemy->getExp() + 100);
 		_enemy->setPosition(_enemy->born_position);
 		_enemy->setVisible(true);
 		_enemy->setCurrentHp(_enemy->getHp());
@@ -257,6 +259,45 @@ void GameScene2::update(float delta)
 	}
 	soldierAI();
 	//enemyAI();
+	if (_redcrystal->isDie())
+	{
+		if (_player->getFlag() == Flag::RED)
+		{
+			Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(3, EndScene::createWithBool(0)));
+		}
+		else
+		{
+			Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(3, EndScene::createWithBool(1)));
+		}
+	}
+	if (_bluecrystal->isDie())
+	{
+		if (_player->getFlag() == Flag::BLUE)
+		{
+			Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(3, EndScene::createWithBool(0)));
+		}
+		else
+		{
+			Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(3, EndScene::createWithBool(1)));
+		}
+	}
+	if (_player->isDie())
+	{
+		TT->setVisible(1);
+		TT->setString(std::to_string((_player->revive_time - now_time) / 1000+1) );
+	}
+
+	else
+	{
+		TT->setVisible(0);
+	}
+	std::string s1 = std::to_string(_enemy->head);
+	std::string s2 = std::to_string(_player->head);
+	std::string ss = s1 + ':' + s2;
+	ZZ->setString(ss);
+	std::string s3 = std::to_string(_player->getMoney());
+	std::string s4 = "money:" + s3;
+	MM->setString(s4);
 }
 //status 0->无响应
 //		1 按下
@@ -968,7 +1009,7 @@ void GameScene2::playerAttack()
 	{
 		bool GetEnemy = false;
 		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
-		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
 		{
 			f->target.push_back(_enemy);
 			GetEnemy = true;
@@ -978,7 +1019,7 @@ void GameScene2::playerAttack()
 		{
 			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 			{
-				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 500 * 500)
 				{
 					f->target.push_back(*i);
 					GetEnemy = true;
@@ -991,6 +1032,7 @@ void GameScene2::playerAttack()
 				_player->setEndTime(GetCurrentTime() + 250);
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_player);
+			f->setInjure(_player->getPhysicsAttack());
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
 			_tileMap->addChild(f, 10);
@@ -1017,14 +1059,14 @@ void GameScene2::playerAttack()
 				{
 					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right")
 				{
 					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 
 				}
@@ -1032,7 +1074,7 @@ void GameScene2::playerAttack()
 				{
 					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Down")
@@ -1040,35 +1082,35 @@ void GameScene2::playerAttack()
 					float c = v.getAngle();
 					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Left-Up")
 				{
 					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Left-Down")
 				{
 					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right-Up")
 				{
 					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right-Down")
 				{
 					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
 					{
-						_enemy->setCurrentHp(_enemy->getCurrentHp() - 100);
+						_enemy->setCurrentHp(_enemy->getCurrentHp() - _player->getPhysicsAttack() + _enemy->getPhysicsDefence());
 					}
 				}
 			}
@@ -1085,14 +1127,15 @@ void GameScene2::playerAttack()
 				{
 					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right")
 				{
 					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 
 				}
@@ -1100,7 +1143,8 @@ void GameScene2::playerAttack()
 				{
 					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Down")
@@ -1108,35 +1152,39 @@ void GameScene2::playerAttack()
 					float c = v.getAngle();
 					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Left-Up")
 				{
 					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Left-Down")
 				{
 					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Right-Up")
 				{
 					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Right-Down")
 				{
 					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _player->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 			}
@@ -1147,7 +1195,7 @@ void GameScene2::playerAttack()
 		bool GetEnemy = false;
 		Model* cc;
 		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
-		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 600 * 600)
 		{
 			f->target.push_back(_enemy);
 			if (!GetEnemy)cc = _enemy;
@@ -1158,8 +1206,9 @@ void GameScene2::playerAttack()
 		{
 			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 			{
-				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 600 * 600)
 				{
+
 					f->target.push_back(*i);
 					if (!GetEnemy)cc = *i;
 					GetEnemy = true;
@@ -1198,6 +1247,7 @@ void GameScene2::playerAttack()
 			f->initWithFile(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_player);
+			f->setInjure(_player->getPhysicsAttack());
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
 			_tileMap->addChild(f, 10);
@@ -1286,13 +1336,19 @@ void GameScene2::playerAttack_1()
 			}
 			f->setPosition(ballposition);
 			f->setVisible(true);
+			f->setInjure(_player->getPhysicsAttack()*1.5);
 			_tileMap->addChild(f, 10);
 			_ImpactWave.push_back(f);
 		}
 	}
 	else if (_player->getName() == "YaSe")
 	{
-
+		long long now_time = GetCurrentTime();
+		if (now_time - _player->_attackTime1 >= 8000)
+		{
+			_player->setPhysicsAttack(_player->getPhysicsAttack() + 5);
+			_player->_attackTime1 = now_time;
+		}
 	}
 	else if (_player->getName() == "HouYi")
 	{
@@ -1351,7 +1407,7 @@ void GameScene2::playerAttack_2()
 		bool isDo = false;
 		bool GetEnemy = false;
 		FlyingBox* f = FlyingBox::createWithName("DaJi/DaJi/Skill2/0001.PNG");
-		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+		if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
 		{
 			f->target.push_back(_enemy);
 			GetEnemy = true;
@@ -1361,7 +1417,7 @@ void GameScene2::playerAttack_2()
 		{
 			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 			{
-				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+				if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 500 * 500)
 				{
 					f->target.push_back(*i);
 					GetEnemy = true;
@@ -1375,6 +1431,7 @@ void GameScene2::playerAttack_2()
 			f->setOwner(_player);
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
+			f->setInjure(_player->getPhysicsAttack() * 2);
 			_tileMap->addChild(f, 10);
 		}
 		if (isDo)
@@ -1435,6 +1492,10 @@ void GameScene2::playerAttack_2()
 				f4->target.push_back(_enemy);
 			for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 				f4->target.push_back(*i);
+			f4->setInjure(0.8*_player->getPhysicsAttack());
+			f4->setInjure(0.8*_player->getPhysicsAttack());
+			f4->setInjure(0.8*_player->getPhysicsAttack());
+			f4->setInjure(0.8*_player->getPhysicsAttack());
 		}
 	}
 	else if (_player->getName() == "HouYi")
@@ -1468,7 +1529,7 @@ void GameScene2::playerAttack_2()
 			f->setPosition(cc->getPosition());
 			if ((!_enemy->isDie()) && (_enemy->getPosition().x - f->getPosition().x)*(_enemy->getPosition().x - f->getPosition().x) + (_enemy->getPosition().y - f->getPosition().y)*(_enemy->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
 			{
-
+				_enemy->setCurrentHp(_enemy->getCurrentHp() - 1.1*_player->getPhysicsAttack());
 			}
 			if (!enemy_flag.empty())
 			{
@@ -1476,6 +1537,7 @@ void GameScene2::playerAttack_2()
 				{
 					if (((*i)->getPosition().x - f->getPosition().x)*((*i)->getPosition().x - f->getPosition().x) + ((*i)->getPosition().y - f->getPosition().y)*((*i)->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
 					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 1.1*_player->getPhysicsAttack());
 
 					}
 				}
@@ -1495,7 +1557,7 @@ void GameScene2::playerAttack_3()
 		for (int a = 1; a <= 5; a++) {
 			bool GetEnemy = false;
 			FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
-			if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 300 * 300)
+			if ((!_enemy->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 600 * 600)
 			{
 				f->target.push_back(_enemy);
 				GetEnemy = true;
@@ -1505,7 +1567,7 @@ void GameScene2::playerAttack_3()
 			{
 				for (auto i = enemy_flag.begin(); i != enemy_flag.end(); i++)
 				{
-					if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 300 * 300)
+					if (((*i)->getPosition().x - _player->getPosition().x)*((*i)->getPosition().x - _player->getPosition().x) + ((*i)->getPosition().y - _player->getPosition().y)*((*i)->getPosition().y - _player->getPosition().y) <= 600 * 600)
 					{
 						f->target.push_back(*i);
 						GetEnemy = true;
@@ -1518,6 +1580,7 @@ void GameScene2::playerAttack_3()
 				f->setOwner(_player);
 				_Scheduleflying.push_back(f);
 				f->setVisible(false);
+				f->setInjure(0.6*_player->getPhysicsAttack());
 				_tileMap->addChild(f, 10);
 			}
 		}
@@ -1531,10 +1594,11 @@ void GameScene2::playerAttack_3()
 
 			Vec2 v1 = _player->getPosition();
 			Vec2 v2 = _enemy->getPosition();
-			if (v1.getDistance(v2) < 500 && _enemy->isDie())
+			if (v1.getDistance(v2) < 500 && !_enemy->isDie())
 			{
 				_player->_attackTime3 = GetCurrentTime();
 				_player->setPosition(v2);
+				_enemy->setCurrentHp(_enemy->getCurrentHp() - 300);
 			}
 		}
 	}
@@ -1548,6 +1612,7 @@ void GameScene2::playerAttack_3()
 			_ScheduleButterfly.push_back(f);
 			f->setVisible(false);
 			f->setOwner(_player);
+			f->setInjure(500);
 			_tileMap->addChild(f, 10);
 		}
 	}
@@ -1560,7 +1625,7 @@ void GameScene2::enemyAttack()
 	{
 		bool GetEnemy = false;
 		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("DaJi/DaJi/Attack/%s/0000.PNG", _enemy->Now_Direction.c_str()));
-		if ((!_player->isDie()) && (_player->getPosition().x - _enemy->getPosition().x)*(_player->getPosition().x - _enemy->getPosition().x) + (_player->getPosition().y - _enemy->getPosition().y)*(_player->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+		if ((!_player->isDie()) && (_player->getPosition().x - _enemy->getPosition().x)*(_player->getPosition().x - _enemy->getPosition().x) + (_player->getPosition().y - _enemy->getPosition().y)*(_player->getPosition().y - _enemy->getPosition().y) <= 500 * 500)
 		{
 			f->target.push_back(_player);
 			GetEnemy = true;
@@ -1570,7 +1635,7 @@ void GameScene2::enemyAttack()
 		{
 			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
 			{
-				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 500 * 500)
 				{
 					f->target.push_back(*i);
 					GetEnemy = true;
@@ -1583,6 +1648,7 @@ void GameScene2::enemyAttack()
 				_enemy->setEndTime(GetCurrentTime() + 250);
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_enemy);
+			f->setInjure(_enemy->getPhysicsAttack());
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
 			_tileMap->addChild(f, 1);
@@ -1609,14 +1675,14 @@ void GameScene2::enemyAttack()
 				{
 					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right")
 				{
 					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
 					}
 
 				}
@@ -1624,7 +1690,8 @@ void GameScene2::enemyAttack()
 				{
 					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Down")
@@ -1632,35 +1699,40 @@ void GameScene2::enemyAttack()
 					float c = v.getAngle();
 					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Left-Up")
 				{
 					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Left-Down")
 				{
 					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Right-Up")
 				{
 					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Right-Down")
 				{
 					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
 					{
-						_player->setCurrentHp(_player->getCurrentHp() - 100);
+						_player->setCurrentHp(_player->getCurrentHp() - _enemy->getPhysicsAttack() + _player->getPhysicsDefence());
+
 					}
 				}
 			}
@@ -1677,14 +1749,15 @@ void GameScene2::enemyAttack()
 				{
 					if ((v.getAngle() >= 3.14 / 2 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 2))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
+
 					}
 				}
 				else if (dir == "Right")
 				{
 					if ((v.getAngle() >= -3.14 / 2 && v.getAngle() <= 3.14 / 2))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 
 				}
@@ -1692,7 +1765,7 @@ void GameScene2::enemyAttack()
 				{
 					if ((v.getAngle() >= 0 && v.getAngle() <= 3.14))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Down")
@@ -1700,35 +1773,35 @@ void GameScene2::enemyAttack()
 					float c = v.getAngle();
 					if ((v.getAngle() >= -3.14 && v.getAngle() <= 0))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Left-Up")
 				{
 					if ((v.getAngle() >= 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3 * 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Left-Down")
 				{
 					if ((v.getAngle() >= 3 * 3.14 / 4 && v.getAngle() <= 3.14) || (v.getAngle() >= -3.14 && v.getAngle() <= -3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right-Up")
 				{
 					if ((v.getAngle() >= -3.14 / 4 && v.getAngle() <= 3 * 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 				else if (dir == "Right-Down")
 				{
 					if ((v.getAngle() >= -3 * 3.14 / 4 && v.getAngle() <= 3.14 / 4))
 					{
-						(*i)->setCurrentHp((*i)->getCurrentHp() - 100);
+						(*i)->setCurrentHp((*i)->getCurrentHp() - _enemy->getPhysicsAttack() + (*i)->getPhysicsDefence());
 					}
 				}
 			}
@@ -1739,7 +1812,7 @@ void GameScene2::enemyAttack()
 		bool GetEnemy = false;
 		Model* cc;
 		FlyingBox* f = FlyingBox::createWithName(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
-		if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 500 * 500)
+		if ((!_player->isDie()) && (_enemy->getPosition().x - _player->getPosition().x)*(_enemy->getPosition().x - _player->getPosition().x) + (_enemy->getPosition().y - _player->getPosition().y)*(_enemy->getPosition().y - _player->getPosition().y) <= 600 * 600)
 		{
 			f->target.push_back(_player);
 			if (!GetEnemy)cc = _player;
@@ -1750,7 +1823,7 @@ void GameScene2::enemyAttack()
 		{
 			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
 			{
-				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 300 * 300)
+				if (((*i)->getPosition().x - _enemy->getPosition().x)*((*i)->getPosition().x - _enemy->getPosition().x) + ((*i)->getPosition().y - _enemy->getPosition().y)*((*i)->getPosition().y - _enemy->getPosition().y) <= 600 * 600)
 				{
 					f->target.push_back(*i);
 					if (!GetEnemy)cc = *i;
@@ -1790,6 +1863,7 @@ void GameScene2::enemyAttack()
 			f->initWithFile(cocos2d::StringUtils::format("HouYi/HouYi/Attack/%s/0000.PNG", _player->Now_Direction.c_str()));
 			f->setNowtime(GetCurrentTime() + 34);
 			f->setOwner(_enemy);
+			f->setInjure(_enemy->getPhysicsAttack());
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
 			_tileMap->addChild(f, 1);
@@ -1878,13 +1952,19 @@ void GameScene2::enemyAttack_1()
 			}
 			f->setPosition(ballposition);
 			f->setVisible(true);
+			f->setInjure(_enemy->getPhysicsAttack()*1.5);
 			_tileMap->addChild(f, 10);
 			_ImpactWave.push_back(f);
 		}
 	}
 	else if (_enemy->getName() == "YaSe")
 	{
-
+		long long now_time = GetCurrentTime();
+		_player->_attackTime1 = now_time;
+		if (now_time - _enemy->_attackTime1 >= 8000)
+		{
+			_enemy->setPhysicsAttack(_enemy->getPhysicsAttack() + 5);
+		}
 	}
 	else if (_enemy->getName() == "HouYi")
 	{
@@ -1967,6 +2047,7 @@ void GameScene2::enemyAttack_2()
 			f->setOwner(_enemy);
 			_Scheduleflying.push_back(f);
 			f->setVisible(false);
+			f->setInjure(2 * _enemy->getPhysicsAttack());
 			_tileMap->addChild(f, 10);
 		}
 		if (isDo)
@@ -2027,6 +2108,7 @@ void GameScene2::enemyAttack_2()
 				f4->target.push_back(_player);
 			for (auto i = player_flag.begin(); i != player_flag.end(); i++)
 				f4->target.push_back(*i);
+			f1->setInjure(0.8*_enemy->getPhysicsAttack());
 		}
 	}
 	else if (_enemy->getName() == "HouYi")
@@ -2060,7 +2142,7 @@ void GameScene2::enemyAttack_2()
 			f->setPosition(cc->getPosition());
 			if ((!_player->isDie()) && (_player->getPosition().x - f->getPosition().x)*(_player->getPosition().x - f->getPosition().x) + (_player->getPosition().y - f->getPosition().y)*(_player->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
 			{
-
+				_player->setCurrentHp(_player->getCurrentHp() - 1.1*_enemy->getPhysicsAttack());
 			}
 			if (!player_flag.empty())
 			{
@@ -2068,6 +2150,7 @@ void GameScene2::enemyAttack_2()
 				{
 					if (((*i)->getPosition().x - f->getPosition().x)*((*i)->getPosition().x - f->getPosition().x) + ((*i)->getPosition().y - f->getPosition().y)*((*i)->getPosition().y - f->getPosition().y) <= f->getContentSize().width * f->getContentSize().width / 4)
 					{
+						(*i)->setCurrentHp((*i)->getCurrentHp() - 1.1*_enemy->getPhysicsAttack());
 
 					}
 				}
@@ -2110,6 +2193,7 @@ void GameScene2::enemyAttack_3()
 				f->setOwner(_enemy);
 				_Scheduleflying.push_back(f);
 				f->setVisible(false);
+				f->setInjure(0.6*_enemy->getPhysicsAttack());
 				_tileMap->addChild(f, 10);
 			}
 		}
@@ -2127,6 +2211,7 @@ void GameScene2::enemyAttack_3()
 			{
 				_enemy->_attackTime3 = GetCurrentTime();
 				_enemy->setPosition(v2);
+				_player->setCurrentHp(_player->getCurrentHp() - 300);
 			}
 		}
 	}
@@ -2140,6 +2225,7 @@ void GameScene2::enemyAttack_3()
 			_ScheduleButterfly.push_back(f);
 			f->setVisible(false);
 			f->setOwner(_enemy);
+			_player->setCurrentHp(_player->getCurrentHp() - 500);
 			_tileMap->addChild(f, 10);
 		}
 	}
@@ -2226,6 +2312,7 @@ void GameScene2::towerAttack()
 				_Scheduleflying.push_back(f);
 				f->setVisible(false);
 				f->target.push_back(target);
+				f->setInjure((*i)->getPhysicsAttack());
 				_tileMap->addChild(f, 10);
 			}
 		}
@@ -2338,6 +2425,7 @@ void GameScene2::soldierAttack(Soldier * soldier)
 		_Scheduleflying.push_back(f);
 		f->setVisible(false);
 		f->target.push_back(target);
+		f->setInjure(soldier->getPhysicsAttack());
 		_tileMap->addChild(f, 10);
 	}
 }
@@ -2441,7 +2529,7 @@ void GameScene2::doFlying()
 				(*i)->setPosition(f3 + f1);
 				if (abs((*i)->getPosition().x - Target->getPosition().x) <= 20 && abs((*i)->getPosition().y - Target->getPosition().y) <= 20)
 				{
-					Target->setCurrentHp(Target->getCurrentHp() - 100);
+					Target->setCurrentHp(Target->getCurrentHp() - (*i)->getInjure());
 					(*i)->setVisible(false);
 					(*i)->removeFromParent();
 					i = _flying.erase(i);
@@ -2488,6 +2576,7 @@ void GameScene2::doButterfly()
 				if (abs((*i)->getPosition().x - _enemy->getPosition().x) <= 50 && abs((*i)->getPosition().y - _enemy->getPosition().y) <= 50)
 				{
 
+					_enemy->setCurrentHp(_enemy->getCurrentHp() - (*i)->getInjure());
 					(*i)->setVisible(false);
 					(*i)->removeFromParent();
 					i = _Butterfly.erase(i);
@@ -2546,7 +2635,7 @@ void GameScene2::doButterfly()
 			{
 				if (abs((*i)->getPosition().x - _player->getPosition().x) <= 50 && abs((*i)->getPosition().y - _player->getPosition().y) <= 50)
 				{
-
+					_player->setCurrentHp(_player->getCurrentHp() - (*i)->getInjure());
 					(*i)->setVisible(false);
 					(*i)->removeFromParent();
 					i = _Butterfly.erase(i);
@@ -2623,12 +2712,12 @@ void GameScene2::doImpactWave()
 						int xx = *k;
 						int yy = (*j)->getPosition().y - (*i)->getPosition().y;
 						if (xx > 99998)xx = yy;
-						if (xx*yy < 0 && (*j)->getPosition().x<(*i)->getPosition().x + (*i)->getContentSize().width / 2 && (*j)->getPosition().x >(*i)->getPosition().x - (*i)->getContentSize().width / 2)
+						if (xx*yy < 0 && (*j)->getPosition().x<(*i)->getPosition().x + (*i)->getContentSize().width && (*j)->getPosition().x >(*i)->getPosition().x - (*i)->getContentSize().width)
 						{
 							if (xx*yy == 0)
-								(*j)->setCurrentHp((*j)->getCurrentHp() - 500);
+								(*j)->setCurrentHp((*j)->getCurrentHp() - (*i)->getInjure() / 2);
 							else
-								(*j)->setCurrentHp((*j)->getCurrentHp() - 1000);
+								(*j)->setCurrentHp((*j)->getCurrentHp() - (*i)->getInjure());
 						}
 						*k = yy;
 					}
@@ -2649,9 +2738,9 @@ void GameScene2::doImpactWave()
 						if (xx*yy <= 0 && (*j)->getPosition().y<(*i)->getPosition().y + (*i)->getContentSize().height && (*j)->getPosition().y >(*i)->getPosition().y - (*i)->getContentSize().height)
 						{
 							if (xx*yy == 0)
-								(*j)->setCurrentHp((*j)->getCurrentHp() - 500);
+								(*j)->setCurrentHp((*j)->getCurrentHp() - (*i)->getInjure() / 2);
 							else
-								(*j)->setCurrentHp((*j)->getCurrentHp() - 1000);
+								(*j)->setCurrentHp((*j)->getCurrentHp() - (*i)->getInjure());
 						}
 						*k = yy;
 					}
@@ -2748,7 +2837,7 @@ void GameScene2::doShield()
 				float yy = MAX(sz.width / 2, sz.height / 2);
 				if (xx < yy)
 				{
-					(*j)->setCurrentHp((*j)->getCurrentHp() - 100);
+					(*j)->setCurrentHp((*j)->getCurrentHp() - (*i)->getInjure());
 				}
 			}
 		}
@@ -2762,6 +2851,7 @@ void GameScene2::doShield()
 	}
 
 }
+
 
 void GameScene2::initMap()
 {
@@ -2870,7 +2960,19 @@ void GameScene2::initHero(char FLAG)
 		_tileMap->addChild(player, 10);
 		_tileMap->addChild(enemy, 10);
 	}
-
+	TT = cocos2d::Label::createWithTTF("1", "fonts/Marker Felt.ttf", 60);
+	Vec2 v = Director::getInstance()->getWinSize();
+	TT->setPosition(v.x / 2, v.y / 2);
+	TT->setVisible(false);
+	this->addChild(TT, 11);
+	ZZ = cocos2d::Label::createWithTTF("0:0", "fonts/Marker Felt.ttf", 40);
+	ZZ->setPosition(v.x / 2, v.y - 100);
+	ZZ->setVisible(true);
+	this->addChild(ZZ, 11);
+	MM = cocos2d::Label::createWithTTF("money:0", "fonts/Marker Felt.ttf", 40);
+	MM->setPosition(v.x / 2, 100);
+	MM->setVisible(true);
+	this->addChild(MM, 11);
 }
 
 void GameScene2::initSkill()
@@ -3066,7 +3168,6 @@ void GameScene2::initSoldier()
 			soldier3->_name = 1;
 			soldier3->setFlag(Flag::RED);
 			_tileMap->addChild(soldier3, 9);
-			enemy_flag.push_back(soldier3);
 			_soldier.push_back(soldier3);
 			if (soldier3->getFlag() == _player->getFlag())
 			{

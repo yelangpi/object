@@ -1,6 +1,7 @@
 #ifndef __SCENE_GAMESCENE_H__
 #define __SCENE_GAMESCENE_H__
 #include "cocos2d.h"
+#include"EndScene.h"
 #include"Model/Hero.h"
 #include"Model/FlyingBox.h"
 #include"Model/Butterfly.h"
@@ -12,6 +13,7 @@
 class GameScene : public cocos2d::Layer
 {
 public:
+	bool isAp=false;
 	cocos2d::PhysicsWorld* m_world;
 	void setPhyWorld(cocos2d::PhysicsWorld* world) { m_world = world; };
 	static cocos2d::Scene* createScene(std::string name1, std::string name2);
@@ -28,13 +30,16 @@ public:
 	cocos2d::Label* _skilltime1;
 	cocos2d::Label* _skilltime2;
 	cocos2d::Label* _skilltime3;
+	cocos2d::Label* TT;
+	cocos2d::Label* ZZ;
+	cocos2d::Label*MM;
 	long long _nowtime = 0;
-	long long _soldiertime = 0;
+	long long _soldiertime = 9999999999999999;
 	virtual void onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 	virtual void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 	CREATE_FUNC(GameScene);
 	static GameScene* createWithName(std::string name1, std::string name2);
-	bool initWithName(std::string name1,std::string name2);
+	bool initWithName(std::string name1, std::string name2);
 	void update(float delta) override;
 	std::map<std::pair<std::string, std::string>, int>Dirction_Animation_Walk_Number;
 	std::map<std::pair<std::string, std::string>, int>Dirction_Animation_Attack_Number;
@@ -84,9 +89,14 @@ public:
 	void enemyAI();
 	void enemy_onKeyPressed(cocos2d::EventKeyboard::KeyCode keycode, Hero * _player);
 	void enemy_onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, Hero * _player);
+	void CloseCallback(Ref*Psender);
+	void Zhuangbei1(Ref*Psender);
+	void Zhuangbei2(Ref*Psender);
+	void Zhuangbei3(Ref*Psender);
+	cocos2d::Layer *  _super;
 private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;
-	
+
 };
 #endif
